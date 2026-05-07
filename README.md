@@ -1,24 +1,30 @@
-UBUNTU PAY — AFRICA IGNITE 2026 JUDGE SUBMISSION
+**UBUNTU PAY — AFRICA IGNITE 2026 SUBMISSION**
 
-Website: https://ubuntupay.africa/
-Demo: https://ubuntupay.africa/demo-ussd.html
+_Website: https://ubuntupay.africa/
+Demo: https://ubuntupay.africa/demo-ussd.html_
 
-Section 1: Problem Statement
+S**ection 1: Problem Statement**
+
 Despite the rapid growth of digital finance, an estimated 850 million people in Africa remain financially excluded. Existing digital banking and blockchain solutions fail for three primary reasons. First, the Smartphone and Data Barrier creates a gap where most fintech apps require high-end devices and expensive data plans inaccessible to the rural majority. Second, the Identity Gap persists because millions lack the formal documentation required for traditional Tier-1 KYC. Ubuntu Pay bridges this by utilizing the existing identity registered with the cellular network, turning the SIM card's legal registration into a hardware-verified digital ID. Third, the Trust and Complexity barrier prevents adoption because modern blockchain wallets require the management of 12-word seed phrases, where losing a backup means losing a lifetime of savings.
 
-Section 2: Project Objective
+**Section 2: Project Objective**
+
 The objective of Ubuntu Pay is to turn the cellular network into the bank. By leveraging existing cellular infrastructure and Nokia’s Network-as-Code (NaC) platform, we turn a basic SIM card into a secure, hardware-verified bank account. Our goal is to provide institutional-grade P2P transfers and remittances to any individual with a mobile signal, regardless of their phone's hardware capabilities.
 
-Section 3: Methodology and Core Innovation
+**Section 3: Methodology and Core Innovation**
+
 Ubuntu Pay utilizes a multi-layered trust architecture to solve the exclusion and transfer problem. For the Identity Layer, we utilize the identity already registered with the cellular network, querying Nokia CAMARA APIs to verify the physical SIM card's reputation (SIM age, swap history) as a hardware-based KYC signal. For the Intelligence Layer, Gemini AI acts as a "Trust Oracle," processing real-time network signals to generate a security score, blocking 94% of account takeovers before a transaction starts. The Execution Layer uses the TrustGate.sol smart contract to execute Peer-to-Peer transfers on the Polygon blockchain using Circle’s USDC for value stability. Finally, the Access Layer solves the "lost seed phrase" problem by using Argon2id to bind the user's secret PIN to their unique SIM metadata. This transforms the SIM into a Hardware Security Module, where the wallet is derived on-the-fly and cannot be accessed from another device.
 
-Section 4: Scope of Proposed Solution
+**Section 4: Scope of Proposed Solution**
+
 The current scope focuses on the Nairobi-Lagos Remittance Corridor. This includes instant P2P fund transfers with sub-11 second settlement and a safety net protocol that allows for administrative reversals in verified fraud cases, mirroring the safety of legacy banking. To ensure accessibility, a USSD gateway (*384#) allows users to initiate requests without a smartphone or data plan. Furthermore, the system offers Trust-as-a-Service, providing an API for other fintechs and banks to use our Nokia-powered scoring engine for their own validation needs.
 
-Section 5: Technical Implementation Details
+**Section 5: Technical Implementation Details**
+
 The system combines legacy cellular protocols with cutting-edge decentralized finance. The Settlement Rail uses Polygon Amoy for low-cost transactions, while the currency is Circle USDC, ensuring value is backed 1:1 by U.S. Dollars. The Trust Layer integrates six Nokia CAMARA APIs to verify the physical presence and reputation of the SIM card. Key Derivation uses Argon2id to bind the user's PIN to their specific hardware, removing the need for seed phrases. The Risk Engine is powered by Gemini AI for fraud reasoning and trust scoring. The User Interface is a USSD Gateway, ensuring the solution works on basic feature phones via standard shortcodes.
 
-Section 6: Conclusion
+**Section 6: Conclusion**
+
 Ubuntu Pay is a reimagining of trust. By turning the cellular network into a cryptographic witness, we remove the final barriers to financial sovereignty for the next billion users. We provide the speed of a global blockchain and the stability of the U.S. Dollar through the simplicity of a basic mobile signal.
 
 
