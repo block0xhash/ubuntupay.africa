@@ -1,5 +1,8 @@
 UBUNTU PAY — AFRICA IGNITE 2026 JUDGE SUBMISSION
 
+Website: https://ubuntupay.africa/
+Demo: https://ubuntupay.africa/demo-ussd.html
+
 Section 1: Problem Statement
 Despite the rapid growth of digital finance, an estimated 850 million people in Africa remain financially excluded. Existing digital banking and blockchain solutions fail for three primary reasons. First, the Smartphone and Data Barrier creates a gap where most fintech apps require high-end devices and expensive data plans inaccessible to the rural majority. Second, the Identity Gap persists because millions lack the formal documentation required for traditional Tier-1 KYC. Ubuntu Pay bridges this by utilizing the existing identity registered with the cellular network, turning the SIM card's legal registration into a hardware-verified digital ID. Third, the Trust and Complexity barrier prevents adoption because modern blockchain wallets require the management of 12-word seed phrases, where losing a backup means losing a lifetime of savings.
 
