@@ -1,0 +1,7 @@
+
+cast send $USDC_TOKEN_ADDRESS \
+  "transfer(address,uint256)" \
+  $DEPLOYER_ADDRESS \
+  20000000 \
+  --rpc-url $POLYGON_RPC_URL \
+  --private-key $ORACLE_PRIVATE_KEY

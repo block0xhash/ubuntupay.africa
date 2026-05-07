@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubuntu Pay — Developer Console</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+/* ── TOKENS ── */
+:root {
+  --c-bg:        #0A0C10;
+  --c-surface:   #111318;
+  --c-surface2:  #181C26;
+  --c-surface3:  #1E2330;
+  --c-border:    #252D3C;
+  --c-border2:   #2E3848;
+  --c-ink:       #EEF0F5;
+  --c-ink2:      #C0C8D8;
+  --c-ink3:      #7A8494;
+  --c-ink4:      #404C60;
+  --c-amber:     #FFAA00;
+  --c-amber-s:   rgba(255,170,0,.12);
+  --c-green:     #00E5A0;
+  --c-green-s:   rgba(0,229,160,.10);
+  --c-red:       #FF3D5A;
+  --c-red-s:     rgba(255,61,90,.10);
+  --c-blue:      #4080FF;
+  --c-blue-s:    rgba(64,128,255,.10);
+  --c-purple:    #A855F7;
+  --c-purple-s:  rgba(168,85,247,.10);
+  --c-teal:      #00C4DC;
+  --c-orange:    #FF8C00;
+  --ff:'Inter', system-ui, sans-serif;
+  --fh:'Inter', system-ui, sans-serif;
+  --fb:  'Inter', system-ui, sans-serif;
+  --fm:  'DM Mono', 'Menlo', monospace;
+  --r:   8px;
+  --r-lg:12px;
+  --sh:  0 1px 3px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.2);
+}
+
+/* ── BASE ── */
+html, body { height: 100%; font-family: var(--fb); background: var(--c-bg); color: var(--c-ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+/* ── LAYOUT ── */
+.app    { height: 100vh; display: grid; grid-template-rows: 52px 1fr; }
+.body   { display: flex; overflow: hidden; height: 100%; }
+.sidebar{ width: 210px; flex-shrink: 0; background: var(--c-surface); border-right: 1px solid var(--c-border); display: flex; flex-direction: column; overflow-y: auto; }
+.main   { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ── HEADER ── */
+.hdr { display: flex; align-items: center; justify-content: space-between; padding: 0 18px; background: var(--c-surface); border-bottom: 1px solid var(--c-border); }
+.hdr-brand { display: flex; align-items: center; gap: 10px; }
+.hdr-mark  { width: 28px; height: 28px; border-radius: 7px; background: var(--c-amber); display: flex; align-items: center; justify-content: center; font-family: var(--ff); font-weight: 800; font-size: 13px; color: #000; flex-shrink: 0; }
+.hdr-title { font-family: var(--ff); font-size: 15px; font-weight: 800; color: var(--c-ink); letter-spacing: -.02em; }
+.hdr-sep   { width: 1px; height: 14px; background: var(--c-border); }
+.hdr-sub   { font-size: 11px; color: var(--c-ink3); font-weight: 500; }
+.hdr-nav   { display: flex; gap: 6px; }
+.hdr-nav a { font-size: 11px; font-weight: 600; color: var(--c-ink3); text-decoration: none; padding: 5px 11px; border: 1px solid var(--c-border); border-radius: 6px; transition: all .15s; }
+.hdr-nav a:hover { border-color: var(--c-amber); color: var(--c-amber); }
+.hdr-pills { display: flex; gap: 7px; align-items: center; }
+.pill { font-family: var(--fm); font-size: 9.5px; font-weight: 700; padding: 3px 10px; border-radius: 100px; border: 1px solid; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.pill-on   { background: var(--c-green-s);  border-color: rgba(0,229,160,.35);  color: var(--c-green); }
+.pill-off  { background: var(--c-red-s);    border-color: rgba(255,61,90,.35);  color: var(--c-red); }
+.pill-warn { background: var(--c-amber-s);  border-color: rgba(255,170,0,.35);  color: var(--c-amber); }
+.pill-dot  { animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+#clk { font-family: var(--fm); font-size: 11px; color: var(--c-ink4); }
+
+/* ── SIDEBAR ── */
+.sb-section { padding: 16px 14px 6px; font-family: var(--fm); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--c-ink4); }
+.sb-item    { display: flex; align-items: center; gap: 8px; padding: 8px 14px; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--c-ink3); border-left: 2px solid transparent; transition: all .13s; text-decoration: none; }
+.sb-item:hover  { background: var(--c-surface2); color: var(--c-ink); }
+.sb-item.active { background: var(--c-surface2); border-left-color: var(--c-amber); color: var(--c-ink); }
+.sb-badge { font-family: var(--fm); font-size: 8.5px; font-weight: 700; padding: 1px 6px; border-radius: 3px; border: 1px solid; text-transform: uppercase; flex-shrink: 0; }
+.badge-post   { background: rgba(255,140,0,.12); border-color: rgba(255,140,0,.4);  color: #FF8C00; }
+.badge-get    { background: rgba(0,168,192,.10); border-color: rgba(0,168,192,.4);  color: #00A8C0; }
+.badge-ws     { background: var(--c-purple-s);  border-color: rgba(168,85,247,.4);  color: var(--c-purple); }
+.badge-b2b    { background: var(--c-amber-s);   border-color: rgba(255,170,0,.5);   color: var(--c-amber); font-size: 8px; }
+.sb-footer    { margin-top: auto; padding: 14px; border-top: 1px solid var(--c-border); }
+.sb-footer p  { font-family: var(--fm); font-size: 10px; color: var(--c-ink4); line-height: 1.9; }
+.sb-footer .url { color: var(--c-blue); }
+
+/* ── ENDPOINT CARD ── */
+.ep-card   { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg); overflow: visible; }
+.ep-card.open { border-color: var(--c-border2); }
+.ep-head   { display: flex; align-items: center; gap: 12px; padding: 13px 16px; cursor: pointer; user-select: none; }
+.ep-head:hover { background: rgba(255,255,255,.02); border-radius: var(--r-lg); }
+.ep-method { font-family: var(--fm); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 5px; border: 1.5px solid; text-transform: uppercase; letter-spacing: .04em; flex-shrink: 0; min-width: 54px; text-align: center; }
+.m-post    { background: rgba(255,140,0,.12); border-color: rgba(255,140,0,.45); color: #FF8C00; }
+.m-get     { background: rgba(0,168,192,.10); border-color: rgba(0,168,192,.45); color: #00A8C0; }
+.ep-path   { font-family: var(--fm); font-size: 13.5px; font-weight: 700; color: var(--c-ink); flex-shrink: 0; }
+.ep-tagline{ font-size: 12px; font-weight: 500; color: var(--c-ink3); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ep-chev   { color: var(--c-ink4); font-size: 12px; flex-shrink: 0; transition: transform .2s; }
+.ep-chev.open { transform: rotate(180deg); }
+
+/* ── ENDPOINT BODY — the critical rule ── */
+.ep-body {
+  display: none;
+  border-top: 1px solid var(--c-border);
+  padding: 20px;
+  background: var(--c-surface2);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+.ep-body.is-open {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── FORM ELEMENTS ── */
+.f-label { font-family: var(--fm); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--c-ink3); margin-bottom: 6px; }
+.f-desc  { font-size: 13px; font-weight: 500; color: var(--c-ink2); line-height: 1.7; padding: 12px 14px; background: var(--c-surface3); border-radius: var(--r); border-left: 3px solid var(--c-amber); }
+.f-textarea {
+  width: 100%;
+  background: var(--c-surface3);
+  border: 1px solid var(--c-border2);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  font-family: var(--fm);
+  font-size: 12.5px;
+  color: var(--c-ink);
+  line-height: 1.75;
+  resize: vertical;
+  min-height: 110px;
+  outline: none;
+  transition: border-color .15s;
+}
+.f-textarea:focus { border-color: var(--c-blue); }
+.f-phone-row { display: flex; gap: 10px; align-items: center; }
+.f-phone { flex: 1; background: var(--c-surface3); border: 1px solid var(--c-border2); border-radius: var(--r); padding: 10px 14px; font-family: var(--fm); font-size: 12.5px; color: var(--c-ink); outline: none; transition: border-color .15s; }
+.f-phone:focus { border-color: var(--c-blue); }
+
+/* ── EXECUTE ROW ── */
+.exec-row   { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.exec-btn   { display: inline-flex; align-items: center; gap: 7px; padding: 9px 20px; background: var(--c-amber); color: #000; font-family: var(--fh); font-size: 13px; font-weight: 700; border: none; border-radius: var(--r); cursor: pointer; transition: all .16s; flex-shrink: 0; }
+.exec-btn:hover { background: #FFBB20; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,170,0,.3); }
+.exec-btn:active { transform: none; }
+.exec-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.exec-status { font-family: var(--fm); font-size: 11px; font-weight: 700; }
+.s-ok  { color: var(--c-green); }
+.s-err { color: var(--c-red); }
+.s-run { color: var(--c-amber); animation: blink .8s infinite; }
+.exec-ms { font-family: var(--fm); font-size: 11px; color: var(--c-ink4); }
+
+/* ── RESPONSE BOX ── */
+.resp-box {
+  background: var(--c-surface3);
+  border: 1px solid var(--c-border2);
+  border-radius: var(--r);
+  padding: 13px 15px;
+  font-family: var(--fm);
+  font-size: 12.5px;
+  color: var(--c-ink2);
+  line-height: 1.85;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 360px;
+  overflow-y: auto;
+  min-height: 52px;
+}
+.resp-box.ok  { border-color: rgba(0,229,160,.35); }
+.resp-box.err { border-color: rgba(255,61,90,.35);  }
+.j-key  { color: var(--c-ink3); }
+.j-str  { color: var(--c-ink2); }
+.j-num  { color: var(--c-amber); }
+.j-bool { color: var(--c-green); }
+.j-null { color: var(--c-blue); }
+.j-err  { color: var(--c-red); }
+.j-allow { color: var(--c-green); font-weight: 700; }
+.j-block { color: var(--c-red); font-weight: 700; }
+
+/* ── WS CARD ── */
+.ws-card     { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg); overflow: hidden; }
+.ws-head     { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--c-border); }
+.ws-title    { font-family: var(--fh); font-size: 13px; font-weight: 700; color: var(--c-ink); }
+.ws-sub      { font-size: 10.5px; color: var(--c-ink3); margin-top: 2px; }
+.ws-badge    { font-family: var(--fm); font-size: 9.5px; font-weight: 700; padding: 2px 9px; border-radius: 100px; border: 1px solid; }
+.wsb-on  { background: var(--c-green-s);  border-color: rgba(0,229,160,.3);  color: var(--c-green); }
+.wsb-off { background: var(--c-red-s);    border-color: rgba(255,61,90,.3);  color: var(--c-red); }
+.ws-log  { padding: 10px 14px; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.ws-row  { display: flex; gap: 9px; align-items: flex-start; line-height: 1.5; }
+.ws-ts   { font-family: var(--fm); font-size: 9.5px; color: var(--c-ink4); flex-shrink: 0; padding-top: 1px; }
+.ws-tag  { font-family: var(--fm); font-size: 8.5px; font-weight: 700; padding: 1px 7px; border-radius: 3px; border: 1px solid; text-transform: uppercase; letter-spacing: .04em; flex-shrink: 0; }
+.wt-nokia  { background: var(--c-blue-s);   border-color: rgba(64,128,255,.3);  color: var(--c-blue); }
+.wt-ai     { background: var(--c-purple-s); border-color: rgba(168,85,247,.3);  color: var(--c-purple); }
+.wt-chain  { background: var(--c-green-s);  border-color: rgba(0,229,160,.3);   color: var(--c-green); }
+.wt-yc     { background: var(--c-amber-s);  border-color: rgba(255,170,0,.3);   color: var(--c-amber); }
+.wt-ussd   { background: rgba(96,144,255,.1); border-color: rgba(96,144,255,.3); color: #6090FF; }
+.wt-sys    { background: var(--c-surface3); border-color: var(--c-border);       color: var(--c-ink3); }
+.wt-err    { background: var(--c-red-s);    border-color: rgba(255,61,90,.3);   color: var(--c-red); }
+.ws-msg    { font-family: var(--fm); font-size: 11.5px; color: var(--c-ink2); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   B2B PREMIUM CARD
+══════════════════════════════════════ */
+.b2b-wrap {
+  border-radius: var(--r-lg);
+  border: 2px solid rgba(255,170,0,.45);
+  box-shadow: 0 0 0 4px rgba(255,170,0,.06), 0 12px 40px rgba(0,0,0,.35);
+  overflow: hidden;
+  background: var(--c-surface);
+}
+.b2b-shimmer {
+  height: 4px;
+  background: linear-gradient(90deg, #FFAA00 0%, #FF7A00 40%, #FFAA00 80%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease infinite;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* Banner */
+.b2b-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, rgba(255,170,0,.1) 0%, rgba(255,122,0,.04) 100%);
+  border-bottom: 1px solid rgba(255,170,0,.2);
+}
+.b2b-eyebrow  { font-family: var(--fm); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: rgba(255,170,0,.75); margin-bottom: 5px; }
+.b2b-headline { font-family: var(--fh); font-size: 22px; font-weight: 800; color: var(--c-amber); letter-spacing: -.02em; line-height: 1; }
+.b2b-price-box { text-align: right; background: var(--c-surface2); border: 1.5px solid rgba(255,170,0,.35); border-radius: 10px; padding: 10px 18px; flex-shrink: 0; }
+.b2b-price     { font-family: var(--fh); font-size: 32px; font-weight: 900; color: var(--c-amber); letter-spacing: -.04em; line-height: 1; }
+.b2b-price sup { font-size: 16px; font-weight: 600; opacity: .7; vertical-align: super; }
+.b2b-price-sub { font-family: var(--fm); font-size: 9.5px; color: rgba(255,170,0,.65); font-weight: 700; margin-top: 4px; letter-spacing: .04em; }
+
+/* Inner */
+.b2b-inner { padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; }
+.b2b-desc  { font-size: 13px; font-weight: 500; color: var(--c-ink2); line-height: 1.7; }
+.b2b-desc code { font-family: var(--fm); font-size: 11.5px; background: var(--c-surface3); padding: 2px 8px; border-radius: 4px; color: var(--c-amber); border: 1px solid var(--c-border2); }
+
+/* API reference card */
+.api-card { background: var(--c-surface2); border: 1px solid var(--c-border2); border-radius: 10px; overflow: hidden; }
+.api-card-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 15px; background: var(--c-surface3);
+  border-bottom: 1px solid var(--c-border2);
+}
+.api-card-tagline { flex: 1; font-size: 11px; font-weight: 500; color: var(--c-ink3); text-align: right; }
+.api-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+}
+.api-col { padding: 15px 16px; display: flex; flex-direction: column; gap: 11px; min-width: 0; }
+.api-divider { background: var(--c-border2); }
+
+/* Code blocks inside API card */
+.code-block {
+  background: var(--c-surface3);
+  border: 1px solid var(--c-border2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: var(--fm);
+  font-size: 11px;
+  color: var(--c-ink2);
+  line-height: 1.75;
+  flex: 1;
+}
+.code-block.auth { flex: 0; }
+.code-key  { color: var(--c-blue); }
+.code-str  { color: #98C379; }
+.code-num  { color: var(--c-amber); }
+.code-bool { color: var(--c-green); }
+.code-kw   { color: var(--c-ink3); }
+.code-allow{ color: var(--c-green); font-weight: 700; }
+
+/* Field table */
+.field-table { border: 1px solid var(--c-border2); border-radius: 6px; overflow: hidden; }
+.ft-head { display: grid; grid-template-columns: 100px 60px 68px 1fr; padding: 6px 10px; background: var(--c-surface3); font-family: var(--fm); font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--c-ink3); border-bottom: 1px solid var(--c-border2); }
+.ft-row  { display: grid; grid-template-columns: 100px 60px 68px 1fr; padding: 6px 10px; border-top: 1px solid var(--c-border); align-items: center; }
+.ft-row:first-of-type { border-top: none; }
+.ft-row:nth-child(odd) { background: rgba(255,255,255,.015); }
+.ft-name { font-family: var(--fm); font-size: 10.5px; font-weight: 700; color: var(--c-blue); }
+.ft-type { font-family: var(--fm); font-size: 10px; color: var(--c-purple); }
+.ft-req  { font-family: var(--fm); font-size: 9.5px; font-weight: 700; }
+.ft-req-y { color: var(--c-red); }
+.ft-req-n { color: var(--c-ink4); }
+.ft-desc { font-size: 11px; color: var(--c-ink3); font-weight: 500; }
+
+/* Error table */
+.err-table { border: 1px solid var(--c-border2); border-radius: 6px; overflow: hidden; }
+.err-row   { display: grid; grid-template-columns: 50px 80px 1fr; padding: 5px 10px; border-top: 1px solid var(--c-border); align-items: center; }
+.err-row:first-child { border-top: none; }
+.err-code  { font-family: var(--fm); font-size: 10.5px; font-weight: 700; }
+.err-name  { font-family: var(--fm); font-size: 10px; color: var(--c-ink3); }
+.err-desc  { font-size: 11px; color: var(--c-ink3); }
+
+/* Client grid */
+.client-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.client-card { background: var(--c-surface2); border: 1.5px solid var(--c-border); border-radius: 9px; padding: 13px 12px; text-align: center; cursor: pointer; transition: all .16s; }
+.client-card:hover  { border-color: var(--c-amber); background: var(--c-amber-s); }
+.client-card.active { border-color: var(--c-amber); background: var(--c-amber-s); }
+.client-ico  { font-size: 20px; margin-bottom: 6px; }
+.client-name { font-family: var(--fh); font-size: 11.5px; font-weight: 700; color: var(--c-ink); }
+.client-role { font-size: 10.5px; color: var(--c-ink3); margin-top: 3px; font-weight: 500; }
+
+/* Scenario box */
+.scenario-box { background: var(--c-surface2); border: 1px solid var(--c-border2); border-radius: 9px; padding: 14px 16px; }
+.scenario-eyebrow  { font-family: var(--fm); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--c-amber); margin-bottom: 7px; }
+.scenario-question { font-family: var(--fh); font-size: 14.5px; font-weight: 800; color: var(--c-ink); margin-bottom: 6px; letter-spacing: -.01em; }
+.scenario-desc     { font-size: 12.5px; color: var(--c-ink2); line-height: 1.65; font-weight: 500; }
+
+/* B2B execute label */
+.b2b-exec-label { font-family: var(--fm); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--c-ink3); margin-bottom: 6px; }
+.b2b-exec-label span { color: var(--c-amber); }
+
+/* ARR footer */
+.b2b-arr { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid rgba(255,170,0,.2); }
+.b2b-arr-label { font-size: 12px; color: var(--c-ink3); font-weight: 500; }
+.b2b-arr-val   { font-family: var(--fh); font-size: 18px; font-weight: 800; color: var(--c-amber); letter-spacing: -.02em; }
+
+/* ── BLOCKCHAIN ── */
+.chain-card   { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-lg); padding: 20px 22px; }
+.chain-title  { font-family: var(--fh); font-size: 15px; font-weight: 800; color: var(--c-ink); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.chain-link   { font-family: var(--fm); font-size: 10.5px; color: var(--c-blue); text-decoration: none; font-weight: 500; transition: opacity .15s; }
+.chain-link:hover { opacity: .7; }
+.chain-info   { font-family: var(--fm); font-size: 11px; color: var(--c-ink3); line-height: 1.95; background: var(--c-surface2); border: 1px solid var(--c-border2); border-radius: var(--r); padding: 11px 14px; margin-bottom: 14px; }
+.chain-info .addr { color: var(--c-blue); cursor: pointer; }
+.chain-info .addr:hover { text-decoration: underline; }
+
+.wallet      { background: var(--c-surface2); border: 1px solid var(--c-border); border-radius: var(--r); padding: 13px 15px; margin-bottom: 8px; transition: all .3s; }
+.wallet.lit  { border-color: rgba(0,229,160,.45); background: rgba(0,229,160,.05); }
+.wallet-top  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.wallet-name { font-family: var(--fh); font-size: 13px; font-weight: 700; color: var(--c-ink); }
+.wallet-net  { font-family: var(--fm); font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 100px; background: var(--c-purple-s); border: 1px solid rgba(168,85,247,.3); color: var(--c-purple); }
+.wallet-addr { font-family: var(--fm); font-size: 11px; color: var(--c-blue); cursor: pointer; margin-bottom: 6px; transition: opacity .15s; }
+.wallet-addr:hover { opacity: .7; }
+.wallet-bal  { font-family: var(--fh); font-size: 22px; font-weight: 800; letter-spacing: -.04em; color: var(--c-ink3); line-height: 1; transition: all .3s; }
+.wallet-bal.lit { color: var(--c-green); text-shadow: 0 0 18px rgba(0,229,160,.3); }
+.wallet-lbl  { font-family: var(--fm); font-size: 9px; color: var(--c-ink4); margin-top: 3px; text-transform: uppercase; letter-spacing: .05em; }
+
+.chain-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.chain-btn  { padding: 7px 14px; border-radius: 7px; font-family: var(--fb); font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; background: var(--c-surface2); border: 1px solid var(--c-border); color: var(--c-ink2); transition: all .15s; }
+.chain-btn:hover { border-color: var(--c-amber); color: var(--c-amber); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-border2); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ HEADER ══ -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-mark">U</div>
+    <span class="hdr-title">Ubuntu Pay</span>
+    <div class="hdr-sep"></div>
+    <span class="hdr-sub">Developer Console · Trust Oracle API</span>
+  </div>
+  <div class="hdr-nav">
+    <a href="demo-ussd.html">📱 Nokia Demo</a>
+    <a href="index.html">← Site</a>
+  </div>
+  <div class="hdr-pills">
+    <div class="pill pill-warn" id="p-oracle"><span class="pill-dot"></span><span id="p-oracle-t">Oracle checking…</span></div>
+    <div class="pill pill-warn" id="p-ws"><span id="p-ws-t">WS connecting…</span></div>
+    <span id="clk"></span>
+  </div>
+</header>
+
+<!-- ══ BODY ══ -->
+<div class="body">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sb-section">Trust Oracle</div>
+    <div class="sb-item active" onclick="activateNav(this);jumpTo('ep-trust-check')">
+      <span class="sb-badge badge-post">POST</span>/trust/check
+    </div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-transfer')">
+      <span class="sb-badge badge-post">POST</span>/transfer
+    </div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-deposit')">
+      <span class="sb-badge badge-post">POST</span>/deposit
+    </div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-reverse')">
+      <span class="sb-badge badge-post">POST</span>/reverse
+    </div>
+    <div class="sb-section">Query</div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-health')">
+      <span class="sb-badge badge-get">GET</span>/health
+    </div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-balance')">
+      <span class="sb-badge badge-get">GET</span>/balance/phone
+    </div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-stats')">
+      <span class="sb-badge badge-get">GET</span>/stats
+    </div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('ep-recent')">
+      <span class="sb-badge badge-get">GET</span>/recent
+    </div>
+    <div class="sb-section">Streaming</div>
+    <div class="sb-item" onclick="activateNav(this);document.getElementById('ws-card').scrollIntoView({behavior:'smooth'})">
+      <span class="sb-badge badge-ws">WS</span>/ws/logs
+    </div>
+    <div class="sb-section">B2B · Revenue Stream 2</div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('b2b-card')" style="color:var(--c-amber)">
+      <span class="sb-badge badge-b2b">B2B</span>Oracle API
+    </div>
+    <div class="sb-section">Blockchain</div>
+    <div class="sb-item" onclick="activateNav(this);jumpTo('chain-card')">
+      <span style="font-size:13px">⛓</span>TrustGate.sol
+    </div>
+    <div class="sb-footer">
+      <p>Oracle<br><span class="url">localhost:8000</span><br>USSD Gateway<br><span class="url">localhost:8001</span></p>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- POST /trust/check -->
+    <div class="ep-card open" id="ep-trust-check">
+      <div class="ep-head" onclick="toggleEp('ep-trust-check')">
+        <span class="ep-method m-post">POST</span>
+        <span class="ep-path">/trust/check</span>
+        <span class="ep-tagline">6 Nokia CAMARA APIs + Gemini 3.1 · Core B2B Oracle endpoint</span>
+        <span class="ep-chev open" id="ch-trust-check">▾</span>
+      </div>
+      <div class="ep-body is-open" id="bd-trust-check">
+        <div class="f-desc">Fires all <strong>6 Nokia CAMARA APIs</strong> in parallel — Device Swap · SIM Swap · Roaming · KYC Match · Location Proximity · Number Verify. Assembles signals into a forensic case file, sends to <strong>Gemini 3.1 Flash-Lite</strong>, returns trust score 0–100 with ALLOW/BLOCK decision and plain-English reasoning. This is the B2B endpoint — Standard Bank, Old Mutual and MTN FinServ pay <strong>$0.05/call</strong>.</div>
+        <div>
+          <div class="f-label">Request body</div>
+          <textarea class="f-textarea" id="body-trust-check">{
+  "phone": "+99999991001",
+  "use_case": "payment",
+  "amount": 38.46,
+  "client_id": "demo"
+}</textarea>
+        </div>
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('POST','/trust/check','body-trust-check','resp-trust-check','stat-trust-check','ms-trust-check')">▶ Execute</button>
+          <span class="exec-status" id="stat-trust-check"></span>
+          <span class="exec-ms" id="ms-trust-check"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-trust-check">// Response will appear here after executing</div></div>
+      </div>
+    </div>
+
+    <!-- POST /transfer -->
+    <div class="ep-card" id="ep-transfer">
+      <div class="ep-head" onclick="toggleEp('ep-transfer')">
+        <span class="ep-method m-post">POST</span>
+        <span class="ep-path">/transfer</span>
+        <span class="ep-tagline">Full end-to-end · Nokia oracle → KES→USDC → TrustGate.sol → MTN MoMo</span>
+        <span class="ep-chev" id="ch-transfer">▾</span>
+      </div>
+      <div class="ep-body" id="bd-transfer">
+        <div class="f-desc">Runs the complete payment flow: Nokia trust check → Gemini score → Yellow Card FX → TrustGate.sol execute() → Yellow Card off-ramp to NGN. Called by the USSD gateway after Joseph enters his PIN.</div>
+        <div><div class="f-label">Request body</div>
+          <textarea class="f-textarea" id="body-transfer">{
+  "sender": "+99999991001",
+  "receiver": "+234803000001",
+  "name": "John",
+  "kes": 5000,
+  "pin": "1234"
+}</textarea>
+        </div>
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('POST','/transfer','body-transfer','resp-transfer','stat-transfer','ms-transfer')">▶ Execute</button>
+          <span class="exec-status" id="stat-transfer"></span>
+          <span class="exec-ms" id="ms-transfer"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-transfer">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- POST /deposit -->
+    <div class="ep-card" id="ep-deposit">
+      <div class="ep-head" onclick="toggleEp('ep-deposit')">
+        <span class="ep-method m-post">POST</span>
+        <span class="ep-path">/deposit</span>
+        <span class="ep-tagline">Agent cash-in · calls TrustGate.sol depositFor()</span>
+        <span class="ep-chev" id="ch-deposit">▾</span>
+      </div>
+      <div class="ep-body" id="bd-deposit">
+        <div class="f-desc">The agent calls this after Joseph hands over cash. Calls TrustGate.sol <code style="font-family:var(--fm);background:var(--c-surface3);padding:1px 5px;border-radius:3px;color:var(--c-amber)">depositFor()</code> — moves USDC from agent wallet into Joseph's Nokia-derived Polygon vault.</div>
+        <div><div class="f-label">Request body</div>
+          <textarea class="f-textarea" id="body-deposit">{
+  "phone": "+99999991001",
+  "kes_amount": 5000,
+  "pin": "1234",
+  "agent_id": "agent_001"
+}</textarea>
+        </div>
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('POST','/deposit','body-deposit','resp-deposit','stat-deposit','ms-deposit')">▶ Execute</button>
+          <span class="exec-status" id="stat-deposit"></span>
+          <span class="exec-ms" id="ms-deposit"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-deposit">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- POST /reverse -->
+    <div class="ep-card" id="ep-reverse">
+      <div class="ep-head" onclick="toggleEp('ep-reverse')">
+        <span class="ep-method m-post">POST</span>
+        <span class="ep-path">/reverse</span>
+        <span class="ep-tagline">Reverse last transfer within 15-second grace window · *384*5#</span>
+        <span class="ep-chev" id="ch-reverse">▾</span>
+      </div>
+      <div class="ep-body" id="bd-reverse">
+        <div class="f-desc">Calls TrustGate.sol <code style="font-family:var(--fm);background:var(--c-surface3);padding:1px 5px;border-radius:3px;color:var(--c-amber)">reverseTransfer()</code>. Returns principal and fee to sender. Only valid within the 15-second escrow grace period. Triggered by USSD *384*5#.</div>
+        <div><div class="f-label">Request body</div>
+          <textarea class="f-textarea" style="min-height:72px" id="body-reverse">{
+  "phone": "+99999991001"
+}</textarea>
+        </div>
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('POST','/reverse','body-reverse','resp-reverse','stat-reverse','ms-reverse')">▶ Execute</button>
+          <span class="exec-status" id="stat-reverse"></span>
+          <span class="exec-ms" id="ms-reverse"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-reverse">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- GET /health -->
+    <div class="ep-card" id="ep-health">
+      <div class="ep-head" onclick="toggleEp('ep-health')">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/health</span>
+        <span class="ep-tagline">Oracle status · Nokia real or simulator · Gemini model</span>
+        <span class="ep-chev" id="ch-health">▾</span>
+      </div>
+      <div class="ep-body" id="bd-health">
+        <div class="f-desc">Returns Oracle status including Nokia connection type (real Safaricom network vs simulator), Gemini model string, and database status.</div>
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('GET','/health',null,'resp-health','stat-health','ms-health')">▶ Execute</button>
+          <span class="exec-status" id="stat-health"></span>
+          <span class="exec-ms" id="ms-health"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-health">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- GET /balance/phone -->
+    <div class="ep-card" id="ep-balance">
+      <div class="ep-head" onclick="toggleEp('ep-balance')">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/balance/phone/{phone}</span>
+        <span class="ep-tagline">Derive Argon2id wallet from MSISDN · query USDC balance from TrustGate.sol</span>
+        <span class="ep-chev" id="ch-balance">▾</span>
+      </div>
+      <div class="ep-body" id="bd-balance">
+        <div class="f-desc">Nokia NaC returns IMSI and IMEI for the MSISDN → Argon2id derives the Polygon wallet address → queries TrustGate.sol <code style="font-family:var(--fm);background:var(--c-surface3);padding:1px 5px;border-radius:3px;color:var(--c-amber)">balances()</code>. This is what USSD *384*2# calls in real time.</div>
+        <div class="f-label">Phone number (E.164)</div>
+        <div class="f-phone-row">
+          <input class="f-phone" id="phone-inp" value="+99999991001" placeholder="+254712000001">
+          <button class="exec-btn" onclick="fireBalance()">▶ Execute</button>
+          <span class="exec-status" id="stat-balance"></span>
+          <span class="exec-ms" id="ms-balance"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-balance">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- GET /stats -->
+    <div class="ep-card" id="ep-stats">
+      <div class="ep-head" onclick="toggleEp('ep-stats')">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/stats</span>
+        <span class="ep-tagline">Aggregate trust check stats from SQLite audit trail</span>
+        <span class="ep-chev" id="ch-stats">▾</span>
+      </div>
+      <div class="ep-body" id="bd-stats">
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('GET','/stats',null,'resp-stats','stat-stats','ms-stats')">▶ Execute</button>
+          <span class="exec-status" id="stat-stats"></span>
+          <span class="exec-ms" id="ms-stats"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-stats">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- GET /recent -->
+    <div class="ep-card" id="ep-recent">
+      <div class="ep-head" onclick="toggleEp('ep-recent')">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/recent?limit=5</span>
+        <span class="ep-tagline">Last N trust checks · decision · score · Nokia signals · reasoning</span>
+        <span class="ep-chev" id="ch-recent">▾</span>
+      </div>
+      <div class="ep-body" id="bd-recent">
+        <div class="exec-row">
+          <button class="exec-btn" onclick="fire('GET','/recent?limit=5',null,'resp-recent','stat-recent','ms-recent')">▶ Execute</button>
+          <span class="exec-status" id="stat-recent"></span>
+          <span class="exec-ms" id="ms-recent"></span>
+        </div>
+        <div><div class="f-label">Response</div><div class="resp-box" id="resp-recent">// Response will appear here</div></div>
+      </div>
+    </div>
+
+    <!-- WS LOG -->
+    <div class="ws-card" id="ws-card">
+      <div class="ws-head">
+        <div>
+          <div class="ws-title">WS /ws/logs — Live Oracle Log Stream</div>
+          <div class="ws-sub">WebSocket · Nokia SDK calls · Gemini responses · Polygon events · Yellow Card payouts — all real time</div>
+        </div>
+        <span class="ws-badge wsb-off" id="ws-badge">Connecting…</span>
+      </div>
+      <div class="ws-log" id="ws-log">
+        <div class="ws-row"><span class="ws-ts">--:--:--</span><span class="ws-tag wt-sys">SYS</span><span class="ws-msg">// Connecting to ws://localhost:8000/ws/logs…</span></div>
+      </div>
+    </div>
+
+    <!-- ══ B2B PREMIUM CARD ══ -->
+    <div class="b2b-wrap" id="b2b-card">
+      <div class="b2b-shimmer"></div>
+
+      <!-- Banner -->
+      <div class="b2b-banner">
+        <div>
+          <div class="b2b-eyebrow">Revenue Stream 2 · Trust-as-a-Service</div>
+          <div class="b2b-headline">B2B Oracle API</div>
+        </div>
+        <div class="b2b-price-box">
+          <div class="b2b-price"><sup>$</sup>0.05<sup style="font-size:14px;font-weight:600;opacity:.6">/call</sup></div>
+          <div class="b2b-price-sub">$6M/yr ARR · 10 enterprise clients</div>
+        </div>
+      </div>
+
+      <!-- Inner -->
+      <div class="b2b-inner">
+        <div class="b2b-desc">Banks, insurers and fintechs call <code>POST /trust/check</code> with a phone number and receive a Nokia + Gemini 3.1 trust score in under 3 seconds. Same 6 CAMARA APIs — different <code>client_id</code>. No payment licence required in any jurisdiction.</div>
+
+        <!-- API Reference Card -->
+        <div class="api-card">
+          <div class="api-card-head">
+            <span class="ep-method m-post">POST</span>
+            <span class="ep-path">/trust/check</span>
+            <span class="api-card-tagline">Nokia NaC + Gemini 3.1 · Response in &lt;3s · $0.05/call</span>
+          </div>
+          <div class="api-card-body">
+            <!-- LEFT: Request -->
+            <div class="api-col">
+              <div>
+                <div class="f-label">Authentication</div>
+                <div class="code-block auth">Authorization: Bearer <span class="code-str">{api_key}</span></div>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column">
+                <div class="f-label">Request body</div>
+                <div class="code-block">{<br>
+&nbsp;&nbsp;<span class="code-key">"phone"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"+254712000001"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"use_case"</span>:&nbsp;<span class="code-str">"payment"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"amount"</span>:&nbsp;&nbsp;&nbsp;<span class="code-num">38.46</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"client_id"</span>:<span class="code-str">"std_bank_prod"</span><br>
+}</div>
+              </div>
+              <div>
+                <div class="f-label">Fields</div>
+                <div class="field-table">
+                  <div class="ft-head"><span>Field</span><span>Type</span><span>Required</span><span>Description</span></div>
+                  <div class="ft-row"><span class="ft-name">phone</span><span class="ft-type">string</span><span class="ft-req ft-req-y">required</span><span class="ft-desc">MSISDN in E.164 format</span></div>
+                  <div class="ft-row"><span class="ft-name">use_case</span><span class="ft-type">string</span><span class="ft-req ft-req-y">required</span><span class="ft-desc">payment · loan · kyc · account_opening</span></div>
+                  <div class="ft-row"><span class="ft-name">amount</span><span class="ft-type">float</span><span class="ft-req ft-req-n">optional</span><span class="ft-desc">Transaction value in USD</span></div>
+                  <div class="ft-row"><span class="ft-name">client_id</span><span class="ft-type">string</span><span class="ft-req ft-req-y">required</span><span class="ft-desc">Your identifier for audit trail</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="api-divider"></div>
+            <!-- RIGHT: Response -->
+            <div class="api-col">
+              <div style="flex:1;display:flex;flex-direction:column">
+                <div class="f-label" style="color:var(--c-green)">Response 200 OK</div>
+                <div class="code-block" style="font-size:10.5px">{<br>
+&nbsp;&nbsp;<span class="code-kw">"score":</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-num">94</span>,<br>
+&nbsp;&nbsp;<span class="code-kw">"recommendation":</span>&nbsp;<span class="code-allow">"ALLOW"</span>,<br>
+&nbsp;&nbsp;<span class="code-kw">"confidence":</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"HIGH"</span>,<br>
+&nbsp;&nbsp;<span class="code-kw">"reasoning":</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"All 6 Nokia signals clean…"</span>,<br>
+&nbsp;&nbsp;<span class="code-kw">"check_id":</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"chk_a3f9b2c1"</span>,<br>
+&nbsp;&nbsp;<span class="code-kw">"signals"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"device_changed"</span>:&nbsp;&nbsp;&nbsp;<span style="color:var(--c-red)">false</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"sim_swapped"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-red)">false</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"roaming"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-red)">false</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"country"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-str">"KE"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"kyc_score"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-num">0.85</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"near_agent"</span>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--c-green)">true</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"number_verified"</span>:&nbsp;<span style="color:var(--c-green)">true</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"nokia_response_ms"</span>:<span class="code-num">312</span><br>
+&nbsp;&nbsp;}<br>
+}</div>
+              </div>
+              <div>
+                <div class="f-label">Error codes</div>
+                <div class="err-table">
+                  <div class="err-row"><span class="err-code" style="color:var(--c-red)">400</span><span class="err-name">Bad Request</span><span class="err-desc">Invalid phone number</span></div>
+                  <div class="err-row"><span class="err-code" style="color:var(--c-red)">403</span><span class="err-name">Forbidden</span><span class="err-desc">Invalid api_key</span></div>
+                  <div class="err-row"><span class="err-code" style="color:var(--c-amber)">422</span><span class="err-name">BLOCK</span><span class="err-desc">Nokia score below threshold (70)</span></div>
+                  <div class="err-row"><span class="err-code" style="color:var(--c-red)">429</span><span class="err-name">Rate Limit</span><span class="err-desc">100 req/s per client_id</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enterprise clients -->
+        <div>
+          <div class="f-label" style="margin-bottom:10px">Enterprise clients — select to load scenario and fire live</div>
+          <div class="client-grid">
+            <div class="client-card active" id="bc-0" onclick="selectClient(0)">
+              <div class="client-ico">🏦</div>
+              <div class="client-name">Standard Bank</div>
+              <div class="client-role">Loan underwriting</div>
+            </div>
+            <div class="client-card" id="bc-1" onclick="selectClient(1)">
+              <div class="client-ico">🛡️</div>
+              <div class="client-name">Old Mutual</div>
+              <div class="client-role">Claim verification</div>
+            </div>
+            <div class="client-card" id="bc-2" onclick="selectClient(2)">
+              <div class="client-ico">📱</div>
+              <div class="client-name">MTN FinServ</div>
+              <div class="client-role">MoMo fraud block</div>
+            </div>
+            <div class="client-card" id="bc-3" onclick="selectClient(3)">
+              <div class="client-ico">🌍</div>
+              <div class="client-name">Equity Bank</div>
+              <div class="client-role">KYC fast-track</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario -->
+        <div class="scenario-box">
+          <div class="scenario-eyebrow" id="sc-eyebrow">Standard Bank · Loan Underwriting</div>
+          <div class="scenario-question" id="sc-question">Can we approve a R5,000 micro-loan for this applicant?</div>
+          <div class="scenario-desc" id="sc-desc">Nokia SIM age and KYC match score are stronger credit signals than any bureau data for unbanked applicants. 500k calls/month generates $25k MRR from a single client.</div>
+        </div>
+
+        <!-- Live execute -->
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="b2b-exec-label">Live API call — firing as <span id="b2b-client-name">Standard Bank</span></div>
+          <textarea class="f-textarea" id="b2b-body" style="min-height:90px">{
+  "phone": "+99999991001",
+  "use_case": "loan",
+  "amount": 38.46,
+  "client_id": "standard_bank_prod"
+}</textarea>
+          <div class="exec-row">
+            <button class="exec-btn" id="b2b-btn" onclick="fire('POST','/trust/check','b2b-body','b2b-resp','b2b-stat','b2b-ms')">▶ Query Oracle as Standard Bank</button>
+            <span class="exec-status" id="b2b-stat"></span>
+            <span class="exec-ms" id="b2b-ms"></span>
+          </div>
+          <div><div class="f-label">Oracle response (Nokia + Gemini 3.1)</div><div class="resp-box" id="b2b-resp">// Select a client above and fire the Oracle</div></div>
+        </div>
+
+        <!-- ARR footer -->
+        <div class="b2b-arr">
+          <span class="b2b-arr-label">10 enterprise clients × 1M calls/month · No payment licence required in any jurisdiction</span>
+          <span class="b2b-arr-val">$6M/yr ARR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOCKCHAIN -->
+    <div class="chain-card" id="chain-card">
+      <div class="chain-title">
+        ⛓ TrustGate.sol · Polygon Amoy
+        <a class="chain-link" href="https://amoy.polygonscan.com/address/0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5#code" target="_blank">↗ Verified source</a>
+        <a class="chain-link" href="https://amoy.polygonscan.com/address/0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5#transactions" target="_blank">↗ All transactions</a>
+      </div>
+      <div class="chain-info">
+        Contract:&nbsp; <span class="addr" onclick="window.open('https://amoy.polygonscan.com/address/0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5','_blank')">0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5</span><br>
+        USDC:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="addr">0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582</span><br>
+        Oracle:&nbsp;&nbsp;&nbsp; <span class="addr">0xee861eD8dBE89952CF06e1397D8059958F40613D</span><br>
+        Network: Polygon Amoy · chainId 80002 · minScore 70 · 15-second escrow window
+      </div>
+
+      <div class="wallet" id="w-joseph">
+        <div class="wallet-top"><div class="wallet-name">Joseph · +99999991001 · Nairobi</div><span class="wallet-net">Argon2id derived</span></div>
+        <div class="wallet-addr" id="joseph-addr" onclick="openAddr(this)" data-full="">Deriving from Nokia IMSI + IMEI…</div>
+        <div class="wallet-bal" id="joseph-bal">—</div>
+        <div class="wallet-lbl">USDC · Nokia-bound vault</div>
+      </div>
+
+      <div class="wallet" id="w-john">
+        <div class="wallet-top"><div class="wallet-name">John · +234803000001 · Lagos Nigeria</div><span class="wallet-net">Argon2id derived</span></div>
+        <div class="wallet-addr" id="john-addr" onclick="openAddr(this)" data-full="">Deriving from Nokia IMSI + IMEI…</div>
+        <div class="wallet-bal" id="john-bal">—</div>
+        <div class="wallet-lbl">USDC · Nokia-bound vault · MTN Nigeria</div>
+      </div>
+
+      <div class="chain-btns">
+        <button class="chain-btn" onclick="refreshWallets()">↻ Refresh balances</button>
+        <a class="chain-btn" href="https://amoy.polygonscan.com/address/0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5#transactions" target="_blank">↗ Contract transactions</a>
+        <a class="chain-btn" href="https://amoy.polygonscan.com/address/0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5#code" target="_blank">↗ Verified Solidity source</a>
+        <a class="chain-btn" href="https://amoy.polygonscan.com/token/0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582" target="_blank">↗ USDC token</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+const API = 'http://localhost:8000';
+const WSU = 'ws://localhost:8000/ws/logs';
+// Production: replace with https://api.ubuntupay.africa
+let ws = null;
+
+// ── Clock ──────────────────────────────────────────────
+setInterval(() => {
+  const n = new Date();
+  document.getElementById('clk').textContent =
+    `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+}, 1000);
+
+// ── Nav ────────────────────────────────────────────────
+function activateNav(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+function jumpTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // open if collapsed
+  const body = el.querySelector('.ep-body');
+  if (body && !body.classList.contains('is-open')) {
+    const key = el.id.replace('ep-', '');
+    toggleEp(el.id);
+  }
+}
+
+// ── Toggle endpoint ────────────────────────────────────
+function toggleEp(cardId) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  // find body by position (first .ep-body inside card)
+  const body = card.querySelector('.ep-body');
+  const chev = card.querySelector('.ep-chev');
+  if (!body) return;
+  const isOpen = body.classList.contains('is-open');
+  body.classList.toggle('is-open', !isOpen);
+  card.classList.toggle('open', !isOpen);
+  if (chev) chev.classList.toggle('open', !isOpen);
+}
+
+// ── API call ───────────────────────────────────────────
+async function fire(method, path, bodyId, respId, statId, msId) {
+  const respEl = document.getElementById(respId);
+  const statEl = document.getElementById(statId);
+  const msEl   = document.getElementById(msId);
+
+  if (statEl) { statEl.textContent = 'Running…'; statEl.className = 'exec-status s-run'; }
+  if (respEl) { respEl.textContent = '// Calling Oracle…'; respEl.className = 'resp-box'; }
+
+  const t0 = performance.now();
+  try {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (bodyId) {
+      const el = document.getElementById(bodyId);
+      if (el) {
+        try { JSON.parse(el.value); }
+        catch (je) {
+          if (respEl) { respEl.textContent = 'Invalid JSON:\n' + je.message; respEl.className = 'resp-box err'; }
+          if (statEl) { statEl.textContent = 'JSON Error'; statEl.className = 'exec-status s-err'; }
+          return;
+        }
+        opts.body = el.value;
+      }
+    }
+    const res  = await fetch(API + path, { ...opts, signal: AbortSignal.timeout(15000) });
+    const ms   = Math.round(performance.now() - t0);
+    let data;
+    try { data = await res.json(); } catch { data = await res.text(); }
+    const txt = typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data);
+    if (respEl) { respEl.innerHTML = highlight(txt); respEl.className = res.ok ? 'resp-box ok' : 'resp-box err'; }
+    if (statEl) { statEl.textContent = `${res.status} ${res.ok ? 'OK' : 'Error'}`; statEl.className = `exec-status ${res.ok ? 's-ok' : 's-err'}`; }
+    if (msEl)   msEl.textContent = `${ms}ms`;
+    if (path.includes('transfer') || path.includes('deposit')) setTimeout(refreshWallets, 2000);
+  } catch (e) {
+    const ms = Math.round(performance.now() - t0);
+    const timeout = e.name === 'TimeoutError';
+    const msg = timeout
+      ? `Request timed out (15s)\n\nOracle may still be processing.\nCheck WS log above.`
+      : `Cannot reach Oracle at ${API}\n\nStart server:\ncd ~/UbuntuPay/trust-oracle\nsource ../venv/bin/activate\nuvicorn main:app --port 8000\n\nIf running, ensure CORS allows localhost.\n\nError: ${e.message}`;
+    if (respEl) { respEl.textContent = msg; respEl.className = 'resp-box err'; }
+    if (statEl) { statEl.textContent = timeout ? 'Timeout' : 'Offline'; statEl.className = 'exec-status s-err'; }
+    if (msEl)   msEl.textContent = `${ms}ms`;
+  }
+}
+
+async function fireBalance() {
+  const phone = (document.getElementById('phone-inp').value || '').trim() || '+99999991001';
+  await fire('GET', `/balance/phone/${encodeURIComponent(phone)}`, null, 'resp-balance', 'stat-balance', 'ms-balance');
+}
+
+// ── Syntax highlight ───────────────────────────────────
+function highlight(txt) {
+  return String(txt).replace(
+    /("(?:\\u[a-f0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    m => {
+      if (/^"/.test(m)) {
+        if (/:$/.test(m)) return `<span class="j-key">${m}</span>`;
+        const v = m.slice(1, -1);
+        if (v === 'ALLOW') return `<span class="j-allow">${m}</span>`;
+        if (v === 'BLOCK') return `<span class="j-block">${m}</span>`;
+        return `<span class="j-str">${m}</span>`;
+      }
+      if (/true|false/.test(m)) return `<span class="j-bool">${m}</span>`;
+      if (/null/.test(m)) return `<span class="j-null">${m}</span>`;
+      return `<span class="j-num">${m}</span>`;
+    }
+  );
+}
+
+// ── Health ─────────────────────────────────────────────
+async function checkHealth() {
+  try {
+    const d  = await (await fetch(`${API}/health`, { signal: AbortSignal.timeout(3000) })).json();
+    const ok = d.status === 'ok';
+    const p  = document.getElementById('p-oracle');
+    p.className = `pill ${ok ? 'pill-on' : 'pill-warn'}`;
+    document.getElementById('p-oracle-t').textContent = `Oracle: ${d.nokia === 'real' ? 'Nokia ● Real' : 'Nokia ○ Sim'}`;
+  } catch {
+    document.getElementById('p-oracle').className = 'pill pill-off';
+    document.getElementById('p-oracle-t').textContent = 'Oracle: OFFLINE';
+  }
+}
+checkHealth(); setInterval(checkHealth, 10000);
+
+// ── WebSocket ──────────────────────────────────────────
+function connectWS() {
+  try {
+    ws = new WebSocket(WSU);
+    ws.onopen = () => {
+      document.getElementById('p-ws').className = 'pill pill-on';
+      document.getElementById('p-ws-t').textContent = 'WS: live';
+      document.getElementById('ws-badge').textContent = 'Connected';
+      document.getElementById('ws-badge').className = 'ws-badge wsb-on';
+      addLog('SYS', 'WebSocket connected to Oracle');
+    };
+    ws.onmessage = e => {
+      if (e.data === 'ping') return;
+      const r = e.data;
+      let tag = 'SYS';
+      if (/nokia|device_changed|sim_swap|roaming|kyc|location|verify/i.test(r)) tag = 'NOKIA';
+      else if (/gemini|score|decision|reasoning/i.test(r))                        tag = 'AI';
+      else if (/polygon|0x[0-9a-f]{8}|trustgate|finali/i.test(r))               tag = 'CHAIN';
+      else if (/ussd|\*384|sessionid/i.test(r))                                   tag = 'USSD';
+      else if (/yellow|ngn|momo|payout/i.test(r))                                tag = 'YC';
+      else if (/error|fail|exception/i.test(r))                                   tag = 'ERR';
+      addLog(tag, r.length > 130 ? r.slice(0, 130) + '…' : r);
+      if (/0x[0-9a-f]{16}/i.test(r)) setTimeout(refreshWallets, 2000);
+    };
+    ws.onclose = () => {
+      document.getElementById('p-ws').className = 'pill pill-warn';
+      document.getElementById('p-ws-t').textContent = 'WS: reconnecting…';
+      document.getElementById('ws-badge').textContent = 'Disconnected';
+      document.getElementById('ws-badge').className = 'ws-badge wsb-off';
+      setTimeout(connectWS, 4000);
+    };
+    ws.onerror = () => {};
+  } catch {}
+}
+connectWS();
+
+function addLog(tag, msg) {
+  const log = document.getElementById('ws-log');
+  const el  = document.createElement('div');
+  el.className = 'ws-row';
+  const tc = {NOKIA:'wt-nokia',AI:'wt-ai',CHAIN:'wt-chain',USSD:'wt-ussd',YC:'wt-yc',SYS:'wt-sys',ERR:'wt-err'}[tag] || 'wt-sys';
+  const ts = new Date().toLocaleTimeString('en-GB', { hour12: false });
+  el.innerHTML = `<span class="ws-ts">${ts}</span><span class="ws-tag ${tc}">${tag}</span><span class="ws-msg">${msg}</span>`;
+  log.insertBefore(el, log.firstChild);
+  while (log.children.length > 50) log.removeChild(log.lastChild);
+}
+
+// ── B2B clients ────────────────────────────────────────
+const CLIENTS = [
+  { name:'Standard Bank', eyebrow:'Standard Bank · Loan Underwriting',
+    question:'Can we approve a R5,000 micro-loan for this applicant?',
+    desc:'Nokia SIM age and KYC match score are stronger credit signals than any bureau data for unbanked applicants. 500k calls/month = $25k MRR from one client.',
+    body:{ phone:'+99999991001', use_case:'loan', amount:38.46, client_id:'standard_bank_prod' } },
+  { name:'Old Mutual', eyebrow:'Old Mutual · Insurance Claim Verification',
+    question:'Is this life insurance claimant the actual registered SIM holder?',
+    desc:'Nokia KYC match score + SIM age replaces a 2-week manual verification process. One API call delivers instant identity confirmation.',
+    body:{ phone:'+99999991001', use_case:'kyc', amount:0, client_id:'old_mutual_claims' } },
+  { name:'MTN FinServ', eyebrow:'MTN FinServ · MoMo Fraud Block',
+    question:'Should this ₦50,000 MoMo transaction be allowed right now?',
+    desc:'$0.05 Oracle call prevents an average $50 fraud loss — 1000:1 ROI. Nokia roaming and device swap signals block SIM swap attacks in real time.',
+    body:{ phone:'+99999991001', use_case:'payment', amount:32.12, client_id:'mtn_finserv_momo' } },
+  { name:'Equity Bank', eyebrow:'Equity Bank · KYC Fast-Track',
+    question:'Can we open this account in 60 seconds without physical ID documents?',
+    desc:'Nokia SIM registration data + KYC match score satisfies KYC requirements without physical ID. 60-second account opening at scale.',
+    body:{ phone:'+99999991001', use_case:'account_opening', amount:0, client_id:'equity_bank_ke' } },
+];
+
+function selectClient(i) {
+  document.querySelectorAll('.client-card').forEach((c, j) => c.classList.toggle('active', j === i));
+  const cl = CLIENTS[i];
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('sc-eyebrow',      cl.eyebrow);
+  set('sc-question',     cl.question);
+  set('sc-desc',         cl.desc);
+  set('b2b-client-name', cl.name);
+  const bd = document.getElementById('b2b-body');
+  if (bd) bd.value = JSON.stringify(cl.body, null, 2);
+  const rp = document.getElementById('b2b-resp');
+  if (rp) { rp.textContent = `// Fire the Oracle to see ${cl.name}'s trust result`; rp.className = 'resp-box'; }
+  ['b2b-stat','b2b-ms'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+  const btn = document.getElementById('b2b-btn');
+  if (btn) btn.textContent = `▶ Query Oracle as ${cl.name}`;
+}
+
+// ── Wallets ────────────────────────────────────────────
+function openAddr(el) {
+  if (el.dataset.full) window.open(`https://amoy.polygonscan.com/address/${el.dataset.full}`, '_blank');
+}
+
+async function refreshWallets() {
+  const pairs = [['+99999991001','joseph','w-joseph'], ['+234803000001','john','w-john']];
+  for (const [phone, prefix, rowId] of pairs) {
+    try {
+      const d = await (await fetch(`${API}/balance/phone/${encodeURIComponent(phone)}`, { signal: AbortSignal.timeout(5000) })).json();
+      const addr = d.vault_address || '';
+      const addrEl = document.getElementById(prefix + '-addr');
+      if (addrEl) { addrEl.textContent = addr ? addr.slice(0,10)+'…'+addr.slice(-6) : 'Deriving…'; addrEl.dataset.full = addr; }
+      const balEl = document.getElementById(prefix + '-bal');
+      if (balEl) {
+        balEl.textContent = `${d.balance_usdc || '0'} USDC`;
+        if (parseFloat(d.balance_usdc || 0) > 0) {
+          balEl.classList.add('lit');
+          document.getElementById(rowId)?.classList.add('lit');
+        }
+      }
+    } catch {}
+  }
+}
+
+// ── Init ───────────────────────────────────────────────
+window.addEventListener('load', () => {
+  refreshWallets();
+  setTimeout(() => fire('GET', '/health', null, 'resp-health', 'stat-health', 'ms-health'), 900);
+});
+setInterval(refreshWallets, 20000);
+</script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubuntu Pay — The Network Is The Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F2F0EB;--s:#fff;--b1:#E4E2DA;--b2:#D0CEC6;
+  --ink:#0C0C0A;--i2:#2A2A26;--i3:#4A4A42;--i4:#7A7A72;
+  --green:#0A7A46;--gs:#E6F8EF;
+  --blue:#1A4FD6;--bs:#EBF0FF;
+  --red:#C42018;--amber:#925008;--as2:#FEF5E0;
+  --ff:'Inter',system-ui,sans-serif;
+  --fh:'Inter',system-ui,sans-serif;
+  --fi:'Inter',system-ui,sans-serif;
+  --fm:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fi);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(242,240,235,.94);
+  backdrop-filter:blur(16px);border-bottom:1.5px solid var(--b1);padding:0 40px;
+  height:62px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-mark{width:30px;height:30px;border-radius:7px;background:var(--amber,#FFAA00);display:flex;align-items:center;justify-content:center;font-family:"Inter",sans-serif;font-weight:900;font-size:14px;color:#000;flex-shrink:0}
+.nav-name{font-family:"Inter",sans-serif;font-size:16px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{font-size:13px;font-weight:600;color:var(--i3);text-decoration:none;
+  padding:7px 13px;border-radius:8px;transition:all .15s}
+.nav-link:hover{background:var(--s);color:var(--ink)}
+.nav-cta{background:var(--ink);color:#fff;border-radius:8px;padding:8px 18px;
+  font-family:var(--fi);font-size:13px;font-weight:700;text-decoration:none;
+  transition:all .18s;display:flex;align-items:center;gap:6px}
+.nav-cta:hover{background:var(--i2);transform:translateY(-1px)}
+.nav-badge{background:var(--as2);border:1.5px solid rgba(146,80,8,.2);padding:3px 10px;
+  border-radius:100px;font-family:var(--fm);font-size:10.5px;font-weight:700;color:var(--amber)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:100px 40px 80px;position:relative}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(26,79,214,.05) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;background:var(--gs);
+  border:1.5px solid rgba(10,122,70,.2);border-radius:100px;padding:5px 14px;
+  font-family:var(--fm);font-size:11px;font-weight:700;color:var(--green);
+  margin-bottom:32px;letter-spacing:.04em}
+.hero-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(10,122,70,.4)}70%{box-shadow:0 0 0 6px transparent}}
+.hero-title{font-family:var(--fh);font-size:clamp(52px,8vw,96px);font-weight:900;
+  color:var(--ink);letter-spacing:-.02em;line-height:.95;margin-bottom:28px}
+.hero-title span{color:var(--blue)}
+.hero-sub{font-size:clamp(16px,2.2vw,21px);font-weight:500;color:var(--i3);
+  max-width:640px;line-height:1.65;margin-bottom:48px}
+.hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-primary{background:var(--ink);color:#fff;padding:14px 30px;border-radius:12px;
+  font-family:var(--fi);font-size:15px;font-weight:700;text-decoration:none;
+  transition:all .2s;display:flex;align-items:center;gap:8px}
+.btn-primary:hover{background:var(--i2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(12,12,10,.2)}
+.btn-secondary{background:var(--s);color:var(--ink);padding:14px 26px;border-radius:12px;
+  font-family:var(--fi);font-size:15px;font-weight:600;text-decoration:none;
+  border:1.5px solid var(--b2);transition:all .2s}
+.btn-secondary:hover{border-color:var(--ink);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:48px;margin-top:72px;padding-top:40px;
+  border-top:1.5px solid var(--b1);flex-wrap:wrap;justify-content:center}
+.hstat{text-align:center}
+.hstat-v{font-family:var(--fh);font-size:clamp(28px,4vw,42px);font-weight:800;
+  color:var(--ink);letter-spacing:-.03em;line-height:1}
+.hstat-l{font-size:12px;font-weight:600;color:var(--i4);margin-top:6px;
+  text-transform:uppercase;letter-spacing:.08em;font-family:var(--fm)}
+
+/* SECTIONS */
+.section{padding:100px 40px;max-width:1200px;margin:0 auto}
+.section-tag{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--i4);margin-bottom:16px}
+.section-title{font-family:var(--fh);font-size:clamp(32px,5vw,56px);font-weight:800;
+  color:var(--ink);letter-spacing:-.03em;line-height:1;margin-bottom:20px}
+.section-sub{font-size:17px;font-weight:500;color:var(--i3);max-width:560px;line-height:1.65}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:56px;
+  background:var(--b1);border-radius:16px;overflow:hidden}
+.step{background:var(--s);padding:36px 32px}
+.step-num{font-family:var(--fm);font-size:10.5px;font-weight:700;color:var(--i4);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.step-icon{font-size:32px;margin-bottom:16px}
+.step-title{font-family:var(--fi);font-size:19px;font-weight:800;color:var(--ink);
+  letter-spacing:-.01em;margin-bottom:10px}
+.step-desc{font-size:14px;color:var(--i3);line-height:1.7;font-weight:500}
+.step-detail{margin-top:16px;background:var(--bg);border-radius:8px;padding:12px 14px;
+  font-family:var(--fm);font-size:11.5px;color:var(--i2);line-height:1.7}
+
+/* 6 NOKIA API CARDS */
+.nokia-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:56px;
+  background:var(--b1);border-radius:16px;overflow:hidden}
+.nokia-card{background:var(--s);padding:28px}
+.nc-bar{height:4px;border-radius:2px;margin-bottom:20px}
+.nc-name{font-family:var(--fi);font-size:16px;font-weight:800;color:var(--ink);
+  letter-spacing:-.01em;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.nc-badge{font-family:var(--fm);font-size:9.5px;font-weight:700;padding:2px 8px;
+  border-radius:100px;border:1px solid}
+.nc-desc{font-size:13.5px;color:var(--i3);line-height:1.65;font-weight:500;margin-bottom:14px}
+.nc-code{background:var(--bg);border:1px solid var(--b1);border-radius:7px;
+  padding:8px 12px;font-family:var(--fm);font-size:11px;color:var(--i2);line-height:1.6}
+
+/* COMPARISON */
+.comparison-wrap{margin-top:56px;background:var(--s);border:1.5px solid var(--b1);
+  border-radius:16px;overflow:hidden}
+.comp-hdr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:16px 28px;
+  background:var(--bg);border-bottom:1.5px solid var(--b1);
+  font-family:var(--fi);font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--i4)}
+.comp-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:18px 28px;
+  border-bottom:1px solid var(--b1);align-items:center}
+.comp-row:last-child{border:none}
+.comp-row:hover{background:var(--bg)}
+.cr-feature{font-size:14px;font-weight:600;color:var(--ink)}
+.cr-val{font-family:var(--fm);font-size:13px;font-weight:700;text-align:center}
+.cv-bad{color:var(--red)}.cv-good{color:var(--green)}.cv-ok{color:var(--amber)}
+
+/* TECH */
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.tech-card{background:var(--s);border:1.5px solid var(--b1);border-radius:14px;padding:24px;text-align:center}
+.tc-icon{font-size:28px;margin-bottom:12px}
+.tc-name{font-family:var(--fi);font-size:14px;font-weight:800;color:var(--ink);
+  letter-spacing:-.01em;margin-bottom:6px}
+.tc-desc{font-size:12px;color:var(--i4);font-weight:500;line-height:1.55}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:48px;
+  background:var(--b1);border-radius:16px;overflow:hidden}
+.rmap-phase{background:var(--s);padding:28px 24px}
+.rp-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--i4);margin-bottom:12px}
+.rp-name{font-family:'Inter',system-ui,sans-serif;font-size:16px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin-bottom:8px}
+.rp-desc{font-size:12.5px;color:var(--i3);line-height:1.65;font-weight:500}
+.rp-val{font-family:'Inter',system-ui,sans-serif;font-size:26px;font-weight:900;margin-top:16px;letter-spacing:-.02em}
+.rp-arr-lbl{font-family:'DM Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--i4);margin-top:2px}
+
+/* NEXT STEPS */
+.next-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.next-card{background:var(--s);border:1.5px solid var(--b1);border-radius:14px;padding:28px}
+.next-phase{font-family:var(--fm);font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--i4);margin-bottom:10px}
+.next-title{font-family:var(--fi);font-size:17px;font-weight:800;color:var(--ink);
+  letter-spacing:-.01em;margin-bottom:10px}
+.next-desc{font-size:13px;color:var(--i3);line-height:1.7;font-weight:500}
+.next-items{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.next-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--i2);font-weight:500}
+.next-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
+
+/* CTA */
+.cta-section{background:var(--ink);margin:0 40px 80px;border-radius:24px;
+  padding:72px 80px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap}
+.cta-title{font-family:var(--fh);font-size:clamp(28px,4vw,48px);font-weight:800;
+  color:#fff;letter-spacing:-.03em;line-height:1}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.6);margin-top:14px;font-weight:500;
+  max-width:480px;line-height:1.6}
+.cta-actions{display:flex;gap:12px;flex-wrap:wrap}
+.cta-btn{padding:14px 28px;border-radius:12px;font-family:var(--fi);font-size:14px;
+  font-weight:700;text-decoration:none;letter-spacing:-.01em;transition:all .2s}
+.cta-btn-white{background:#fff;color:var(--ink)}
+.cta-btn-white:hover{background:rgba(255,255,255,.9);transform:translateY(-2px)}
+.cta-btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.2)}
+.cta-btn-ghost:hover{background:rgba(255,255,255,.14);transform:translateY(-2px)}
+
+footer{padding:40px;border-top:1.5px solid var(--b1);display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-brand{font-family:var(--ff);font-size:15px;font-weight:800;color:var(--i3);letter-spacing:-.03em}
+.footer-links{display:flex;gap:20px}
+.footer-link{font-size:13px;color:var(--i4);text-decoration:none;font-weight:500;transition:color .15s}
+.footer-link:hover{color:var(--ink)}
+
+@media(max-width:768px){
+  .steps,.nokia-grid,.tech-grid,.roadmap,.next-grid{grid-template-columns:1fr}
+  .comp-hdr,.comp-row{grid-template-columns:2fr 1fr 1fr}
+  .cta-section{padding:48px 32px;margin:0 20px 60px}
+  nav{padding:0 20px}.nav-links{display:none}
+}
+
+/* ── DOWNLOADS ── */
+.downloads-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px}
+.dl-card{display:flex;align-items:flex-start;gap:16px;background:var(--s);border:1.5px solid var(--b1);
+  border-radius:14px;padding:22px 22px;text-decoration:none;color:inherit;
+  transition:all .2s;cursor:pointer}
+.dl-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 6px 20px rgba(12,12,10,.1)}
+.dl-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.dl-info{flex:1;min-width:0}
+.dl-title{font-family:"Inter",sans-serif;font-size:15px;font-weight:700;color:var(--ink);
+  letter-spacing:-.01em;margin-bottom:5px}
+.dl-desc{font-size:13px;color:var(--i3);line-height:1.6;font-weight:500;margin-bottom:8px}
+.dl-meta{font-family:"DM Mono",monospace;font-size:10px;font-weight:700;
+  color:var(--amber);text-transform:uppercase;letter-spacing:.06em}
+.dl-arrow{font-size:18px;color:var(--i4);flex-shrink:0;margin-top:2px;transition:all .2s}
+.dl-card:hover .dl-arrow{color:var(--ink);transform:translateX(3px)}
+@media(max-width:768px){.downloads-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-mark">U</div>
+    <span class="nav-name">Ubuntu Pay</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#how">How it works</a>
+    <a class="nav-link" href="#nokia">Nokia APIs</a>
+    <a class="nav-link" href="#compare">Compare</a>
+    <a class="nav-link" href="#roadmap">Roadmap</a>
+    <a class="nav-link" href="backend.html">Dev Console</a>
+    <a class="nav-link" href="deck.html">Deck</a>
+    <a class="nav-link" href="whitepaper.html">Whitepaper</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="nav-badge">Africa Ignite 2026 · Shortlisted</span>
+    <a class="nav-cta" href="demo-ussd.html">📱 Live Demo</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag"><span class="dot"></span>Live · Nokia NaC · Gemini 3.1 · Polygon Amoy · Yellow Card</div>
+  <h1 class="hero-title">The Network<br>Is The <span>Bank</span></h1>
+  <p class="hero-sub">Ubuntu Pay turns every African SIM card into a bank account. No app. No ID. No seed phrase. Dial *384# and send money across Africa in 11 seconds for less than 1%.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="demo-ussd.html">📱 Watch Nokia USSD Demo</a>
+    <a class="btn-secondary" href="backend.html">⚙ Dev Console</a>
+    <a class="btn-secondary" href="deck.html">Pitch Deck</a>
+    <a class="btn-secondary" href="whitepaper.html">Whitepaper</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-v">11s</div><div class="hstat-l">Settlement</div></div>
+    <div class="hstat"><div class="hstat-v">&lt;1%</div><div class="hstat-l">Total Fees</div></div>
+    <div class="hstat"><div class="hstat-v">600M</div><div class="hstat-l">Addressable Users</div></div>
+    <div class="hstat"><div class="hstat-v">6</div><div class="hstat-l">Nokia CAMARA APIs</div></div>
+    <div class="hstat"><div class="hstat-v">$6M</div><div class="hstat-l">B2B Revenue Y2</div></div>
+  </div>
+</section>
+
+<div id="how" class="section">
+  <div class="section-tag">How it works</div>
+  <h2 class="section-title">Three steps.<br>Zero friction.</h2>
+  <p class="section-sub">Joseph is a house painter in Nairobi. He has never had a bank account. Here is how he sends money to John in Lagos.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">Step 01</div>
+      <div class="step-icon">🏪</div>
+      <div class="step-title">Joseph visits the Agent</div>
+      <div class="step-desc">Hands over KES 5,000 cash to the Ubuntu Pay agent. Dials *384# on his basic Nokia. No smartphone. No internet required.</div>
+      <div class="step-detail">Nokia CAMARA silently reads MSISDN, IMSI and IMEI from the network. Argon2id(MSISDN + IMSI + IMEI + PIN) → Polygon wallet. No seed phrase. No app. No ID document.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 02</div>
+      <div class="step-icon">📡</div>
+      <div class="step-title">6 Nokia CAMARA APIs fire</div>
+      <div class="step-desc">Device Swap · SIM Swap · Number Verify · KYC Match · Location Proximity · Roaming Status — all in parallel. Gemini 3.1 scores the result 0–100 in under 3 seconds.</div>
+      <div class="step-detail">device_changed: false · roaming: false · country: KE · sim_swapped: false · kyc_score: 0.85 · near_agent: true → Score: 94/100 → ALLOW</div>
+    </div>
+    <div class="step">
+      <div class="step-num">Step 03</div>
+      <div class="step-icon">📲</div>
+      <div class="step-title">John receives NGN in Lagos</div>
+      <div class="step-desc">KES → USDC via Yellow Card. USDC settles on Polygon Amoy via TrustGate.sol. Yellow Card converts USDC → NGN to John's MTN MoMo. John dials *384*2# to confirm his balance.</div>
+      <div class="step-detail">KES 5,000 → 38.37 USDC → ₦59,780 NGN · Fee: KES 15 (0.3%) · Western Union equivalent: KES 840 (16.8%) · Joseph saved: KES 825</div>
+    </div>
+  </div>
+</div>
+
+<div id="nokia" class="section" style="padding-top:0">
+  <div class="section-tag">Nokia Network as Code</div>
+  <h2 class="section-title">6 CAMARA APIs.<br>Zero spoofing.</h2>
+  <p class="section-sub">We use Nokia's cellular network as a cryptographic trust oracle. 6 APIs fire in parallel for every transaction. The network sees what no attacker can fake.</p>
+  <div class="nokia-grid">
+    <div class="nokia-card">
+      <div class="nc-bar" style="background:#1A4FD6"></div>
+      <div class="nc-name">📱 Device Swap <span class="nc-badge" style="color:#1A4FD6;border-color:#1A4FD640;background:#EBF0FF">Nokia NaC</span></div>
+      <div class="nc-desc">Detects if the SIM was moved to a different physical device within 72 hours. 94% of wallet drains follow a device swap.</div>
+      <div class="nc-code">verify_device_swap(max_age=72)<br>→ device_changed: bool</div>
+    </div>
+    <div class="nokia-card">
+      <div class="nc-bar" style="background:#0A7A46"></div>
+      <div class="nc-name">🔍 SIM Swap <span class="nc-badge" style="color:#0A7A46;border-color:#0A7A4640;background:#E6F8EF">Nokia NaC</span></div>
+      <div class="nc-desc">Checks if the physical SIM card was replaced recently. The primary signal for account takeover attacks in African markets.</div>
+      <div class="nc-code">verify_sim_swap(max_age=72)<br>→ sim_swapped: bool</div>
+    </div>
+    <div class="nokia-card">
+      <div class="nc-bar" style="background:#0A6E7A"></div>
+      <div class="nc-name">📡 Roaming Status <span class="nc-badge" style="color:#0A6E7A;border-color:#0A6E7A40;background:#E6F6F8">Nokia NaC</span></div>
+      <div class="nc-desc">Checks if the device is physically in an unexpected country. Joseph in Nairobi — device in Budapest → instant BLOCK. Unspoofable from the network layer.</div>
+      <div class="nc-code">get_roaming()<br>→ roaming: bool, country_code: str</div>
+    </div>
+    <div class="nokia-card">
+      <div class="nc-bar" style="background:#6B22C8"></div>
+      <div class="nc-name">🪪 KYC Match <span class="nc-badge" style="color:#6B22C8;border-color:#6B22C840;background:#F2EEFF">Nokia NaC</span></div>
+      <div class="nc-desc">Matches identity against operator SIM registration data in real time. Score below 0.5 means the SIM holder has changed — fraud signal.</div>
+      <div class="nc-code">check_kyc(name, national_id)<br>→ score: float 0.0–1.0</div>
+    </div>
+    <div class="nokia-card">
+      <div class="nc-bar" style="background:#925008"></div>
+      <div class="nc-name">📍 Location Proximity <span class="nc-badge" style="color:#925008;border-color:#92500840;background:#FEF5E0">Nokia NaC</span></div>
+      <div class="nc-desc">Verifies the device is physically near the agent location. Confirms real-world cash-in. Cannot be faked by remote attackers.</div>
+      <div class="nc-code">verify_location_proximity(lat, lng)<br>→ near_agent: bool, delta_m: int</div>
+    </div>
+    <div class="nokia-card">
+      <div class="nc-bar" style="background:#C42018"></div>
+      <div class="nc-name">✅ Number Verify <span class="nc-badge" style="color:#C42018;border-color:#C4201840;background:#FEF0EE">Nokia NaC</span></div>
+      <div class="nc-desc">Silently confirms the device owns this number via cellular data. No OTP sent — cannot be intercepted by SIM swap attackers.</div>
+      <div class="nc-code">verify_number(access_token="")<br>→ number_verified: bool</div>
+    </div>
+  </div>
+</div>
+
+<div id="compare" class="section" style="padding-top:0">
+  <div class="section-tag">Why Ubuntu Pay</div>
+  <h2 class="section-title">We don't compete<br>with banks.</h2>
+  <p class="section-sub">We build the infrastructure for the 600 million Africans banks decided were not worth serving.</p>
+  <div class="comparison-wrap">
+    <div class="comp-hdr">
+      <span>Feature</span>
+      <span style="text-align:center">Western Union</span>
+      <span style="text-align:center">M-Pesa Global</span>
+      <span style="text-align:center">Ubuntu Pay</span>
+    </div>
+    <div class="comp-row"><span class="cr-feature">Onboarding time</span><span class="cr-val cv-bad">3–5 days</span><span class="cr-val cv-ok">1–2 days</span><span class="cr-val cv-good">60 seconds</span></div>
+    <div class="comp-row"><span class="cr-feature">Settlement time</span><span class="cr-val cv-bad">3–5 days</span><span class="cr-val cv-ok">Minutes</span><span class="cr-val cv-good">11 seconds</span></div>
+    <div class="comp-row"><span class="cr-feature">Total fees</span><span class="cr-val cv-bad">7–16%</span><span class="cr-val cv-ok">~7%</span><span class="cr-val cv-good">&lt;1%</span></div>
+    <div class="comp-row"><span class="cr-feature">Requires smartphone</span><span class="cr-val cv-bad">Yes</span><span class="cr-val cv-bad">Yes</span><span class="cr-val cv-good">No — USSD *384#</span></div>
+    <div class="comp-row"><span class="cr-feature">Security model</span><span class="cr-val cv-bad">PIN / Password</span><span class="cr-val cv-ok">PIN + SMS OTP</span><span class="cr-val cv-good">6 Nokia CAMARA APIs</span></div>
+    <div class="comp-row"><span class="cr-feature">Fraud detection</span><span class="cr-val cv-bad">Reactive</span><span class="cr-val cv-ok">Basic rules</span><span class="cr-val cv-good">Nokia + Gemini 3.1 AI</span></div>
+    <div class="comp-row"><span class="cr-feature">Lost device recovery</span><span class="cr-val cv-bad">Visit branch</span><span class="cr-val cv-ok">Call centre</span><span class="cr-val cv-good">Agent + Nokia verify</span></div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0">
+  <div class="section-tag">Technology</div>
+  <h2 class="section-title">The stack.</h2>
+  <div class="tech-grid">
+    <div class="tech-card"><div class="tc-icon">📡</div><div class="tc-name">Nokia NaC · 6 APIs</div><div class="tc-desc">Device Swap · SIM Swap · Roaming · KYC · Location · Number Verify. The trust layer.</div></div>
+    <div class="tech-card"><div class="tc-icon">✦</div><div class="tc-name">Gemini 3.1 Flash-Lite</div><div class="tc-desc">AI fraud scoring. Reads 6 Nokia signals. Returns 0–100 score + plain English reasoning.</div></div>
+    <div class="tech-card"><div class="tc-icon">⛓</div><div class="tc-name">Polygon Amoy</div><div class="tc-desc">TrustGate.sol deployed. USDC settlement. 15-second escrow with reversal window.</div></div>
+    <div class="tech-card"><div class="tc-icon">💛</div><div class="tc-name">Yellow Card</div><div class="tc-desc">KES → USDC on-ramp. USDC → NGN/GHS/ZAR off-ramp. 15 African countries.</div></div>
+    <div class="tech-card"><div class="tc-icon">🔐</div><div class="tc-name">Argon2id Wallets</div><div class="tc-desc">MSISDN + IMSI + IMEI + PIN → private key. No seed phrase. Nokia is the key store.</div></div>
+    <div class="tech-card"><div class="tc-icon">📱</div><div class="tc-name">USSD *384#</div><div class="tc-desc">Works on any Nokia or feature phone. No internet. No app. Safaricom and MTN ready.</div></div>
+    <div class="tech-card"><div class="tc-icon">🐍</div><div class="tc-name">FastAPI + WebSocket</div><div class="tc-desc">Python. Uvicorn. Loguru. Real-time log streaming. SQLite audit trail.</div></div>
+    <div class="tech-card"><div class="tc-icon">🌍</div><div class="tc-name">Caddy + Ubuntu Pay</div><div class="tc-desc">Live at ubuntupay.africa. Auto HTTPS. Caddy reverse proxy to Trust Oracle.</div></div>
+  </div>
+</div>
+
+
+<div style="margin-top:20px;background:var(--gs);border:1.5px solid rgba(10,122,70,.25);border-radius:14px;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+  <div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);margin-bottom:6px">Testnet · Polygon Amoy</div>
+    <div style="font-family:'Inter',system-ui,sans-serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px">Fund the agent wallet with test USDC</div>
+    <div style="font-size:13px;color:var(--i3);font-weight:500">TrustGate.sol is live on Polygon Amoy. The agent wallet needs test USDC to run the demo end-to-end. Use Circle's faucet — free, instant.</div>
+  </div>
+  <a href="https://faucet.circle.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:var(--green);color:#000;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;border-radius:10px;text-decoration:none;white-space:nowrap;transition:all .2s;flex-shrink:0">
+    Get test USDC ↗
+  </a>
+</div>
+
+<div id="roadmap" class="section" style="padding-top:0">
+  <div class="section-tag">Roadmap to 600M users</div>
+  <h2 class="section-title">Path to $1 billion Annual<br>Recurring Revenue.</h2>
+  <p class="section-sub" style="margin-top:12px;margin-bottom:0">Annual Recurring Revenue — the annualised value of subscription and usage income. Each phase unlocks a new stream on the same Nokia + Polygon infrastructure.</p>
+  <div class="roadmap">
+    <div class="rmap-phase">
+      <div class="rp-label">Phase 1 · Now</div>
+      <div class="rp-name">The Corridor</div>
+      <div class="rp-desc">Kenya → Nigeria → Ghana → South Africa. Perfect the Trust Oracle. Launch agent network. 50k users.</div>
+      <div class="rp-val" style="color:var(--green)">$2M</div>
+      <div class="rp-arr-lbl">Annual Recurring Revenue</div>
+    </div>
+    <div class="rmap-phase">
+      <div class="rp-label">Phase 2 · Year 2</div>
+      <div class="rp-name">The Oracle API</div>
+      <div class="rp-desc">Open Nokia + Gemini Trust Score to banks, lenders, insurers. Trust-as-a-Service. Standard Bank, Old Mutual, Equity Bank.</div>
+      <div class="rp-val" style="color:var(--blue)">$28M</div>
+      <div class="rp-arr-lbl">Annual Recurring Revenue</div>
+    </div>
+    <div class="rmap-phase">
+      <div class="rp-label">Phase 3 · Year 3</div>
+      <div class="rp-name">The Super App</div>
+      <div class="rp-desc">Ubuntu Save (Aave yield 4%). Ubuntu Insurance. Micro-credit referral. ERC-4337 account abstraction. ZK-proof KYC.</div>
+      <div class="rp-val" style="color:var(--amber)">$180M</div>
+      <div class="rp-arr-lbl">Annual Recurring Revenue</div>
+    </div>
+    <div class="rmap-phase">
+      <div class="rp-label">Phase 4 · Year 5</div>
+      <div class="rp-name">Pan-Africa</div>
+      <div class="rp-desc">20M users. 15 countries. The financial OS for the people banks forgot.</div>
+      <div class="rp-val" style="color:#6B22C8">$1B+</div>
+      <div class="rp-arr-lbl">Annual Recurring Revenue</div>
+    </div>
+  </div>
+</div>
+
+<!-- NEXT STEPS -->
+<div class="section" style="padding-top:0">
+  <div class="section-tag">Next Steps</div>
+  <h2 class="section-title">What comes<br>after USSD.</h2>
+  <p class="section-sub">USSD is the foundation — it works on every phone in Africa today. These are the channels we layer on top as we scale.</p>
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="next-phase">Channel 2</div>
+      <div class="next-title">💬 WhatsApp Banking</div>
+      <div class="next-desc">Same Nokia trust oracle, same Polygon settlement — delivered through a WhatsApp conversation. 500M WhatsApp users in Africa already active.</div>
+      <div class="next-items">
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Nokia APIs work identically — MSISDN is the key</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>WhatsApp Business API + Twilio or Africa's Talking</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Richer UI — images, buttons, balance cards</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--amber)">→</div>No new backend needed — same Oracle endpoints</div>
+      </div>
+    </div>
+    <div class="next-card">
+      <div class="next-phase">Channel 3</div>
+      <div class="next-title">🤖 AI Voice Agent</div>
+      <div class="next-desc">Speak to Ubuntu Pay in Swahili, Yoruba, Zulu, Amharic. Voice call triggers the same Nokia verification and Polygon settlement.</div>
+      <div class="next-items">
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Gemini Voice API for multilingual understanding</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Caller ID = MSISDN = wallet — same derivation</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Reaches users with no data, no literacy required</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--amber)">→</div>Prototype with Twilio + Gemini Live API</div>
+      </div>
+    </div>
+    <div class="next-card">
+      <div class="next-phase">Infrastructure</div>
+      <div class="next-title">⚡ ERC-4337 Wallets</div>
+      <div class="next-desc">Account abstraction removes all blockchain complexity. Gasless transactions, social recovery, session keys. Nokia becomes the guardian.</div>
+      <div class="next-items">
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Nokia SIM swap auto-triggers Restricted Mode</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Polygon ID for ZK-proof KYC — no ID upload</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--green)">✓</div>Aave integration for Ubuntu Save yield product</div>
+        <div class="next-item"><div class="next-dot" style="background:var(--amber)">→</div>Replace current Argon2id with ERC-4337 smart wallets</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:0">
+  <div class="section-tag">Downloads</div>
+  <h2 class="section-title">Decks & docs.</h2>
+  <p class="section-sub">Everything you need to understand, present, and evaluate Ubuntu Pay.</p>
+  <div class="downloads-grid">
+
+    <a class="dl-card" href="deck.html">
+      <div class="dl-icon">📊</div>
+      <div class="dl-info">
+        <div class="dl-title">Pitch Deck</div>
+        <div class="dl-desc">Problem · solution · Nokia APIs · revenue · roadmap. 8 slides for the 5-minute slot.</div>
+        <div class="dl-meta">HTML · Interactive</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+    <a class="dl-card" href="UbuntuPay_Technical_Architecture.pptx" download>
+      <div class="dl-icon">⚙️</div>
+      <div class="dl-info">
+        <div class="dl-title">Technical Architecture</div>
+        <div class="dl-desc">System diagram · 6 Nokia APIs · Argon2id wallet derivation · TrustGate.sol · B2B API reference card.</div>
+        <div class="dl-meta">PowerPoint · 8 slides</div>
+      </div>
+      <div class="dl-arrow">↓</div>
+    </a>
+
+    <a class="dl-card" href="UbuntuPay_UserStory_BusinessFlow.pptx" download>
+      <div class="dl-icon">📱</div>
+      <div class="dl-info">
+        <div class="dl-title">User Story & Business Flow</div>
+        <div class="dl-desc">Joseph → Nokia oracle → Polygon → John. The complete story in 10 slides. No jargon.</div>
+        <div class="dl-meta">PowerPoint · 10 slides</div>
+      </div>
+      <div class="dl-arrow">↓</div>
+    </a>
+
+    <a class="dl-card" href="whitepaper.html">
+      <div class="dl-icon">📄</div>
+      <div class="dl-info">
+        <div class="dl-title">Technical Whitepaper</div>
+        <div class="dl-desc">Full architecture · Argon2id proof · Nokia SDK integration · smart contract spec · security model.</div>
+        <div class="dl-meta">HTML · Full depth</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+    <a class="dl-card" href="backend.html">
+      <div class="dl-icon">⚡</div>
+      <div class="dl-info">
+        <div class="dl-title">Developer Console</div>
+        <div class="dl-desc">Live Swagger-style API explorer. Fire Nokia APIs, query Polygon wallets, test B2B endpoints in real time.</div>
+        <div class="dl-meta">Interactive · Live Oracle</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+    <a class="dl-card" href="demo-ussd.html">
+      <div class="dl-icon">📡</div>
+      <div class="dl-info">
+        <div class="dl-title">Nokia USSD Demo</div>
+        <div class="dl-desc">Nokia 3310 on screen. Press keys. Watch 6 Nokia APIs fire. John receives NGN in Lagos. Live end-to-end.</div>
+        <div class="dl-meta">Interactive · Live Oracle</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="cta-section">
+  <div>
+    <h2 class="cta-title">We are not moving money.<br>We are moving trust.</h2>
+    <p class="cta-sub">Ubuntu Pay is the financial operating system for 600 million Africans that legacy banks decided were not worth serving. The infrastructure is live. The Nokia APIs are firing. The network is ready.</p>
+  </div>
+  <div class="cta-actions">
+    <a class="cta-btn cta-btn-white" href="demo-ussd.html">📱 Nokia USSD Demo</a>
+    <a class="cta-btn cta-btn-ghost" href="backend.html">⚙ Dev Console</a>
+    <a class="cta-btn cta-btn-ghost" href="deck.html">Pitch Deck</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">Ubuntu Pay · ubuntupay.africa</div>
+  <div class="footer-links">
+    <a class="footer-link" href="demo-ussd.html">Nokia Demo</a>
+    <a class="footer-link" href="backend.html">Dev Console</a>
+    <a class="footer-link" href="https://faucet.circle.com/" target="_blank" rel="noopener">USDC Faucet ↗</a>
+    <a class="footer-link" href="deck.html">Deck</a>
+    <a class="footer-link" href="whitepaper.html">Whitepaper</a>
+  </div>
+  <div style="font-family:var(--fm);font-size:11px;color:var(--i4)">Africa Ignite 2026 · Theme 6: Open Innovation · Shortlisted</div>
+</footer>
+</body>
+</html>

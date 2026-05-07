@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubuntu Pay — Pitch Deck · Africa Ignite 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0C0F;--s:#F0F2F5;--i2:#C8CDD6;--i3:#8A919E;--b1:#1E2530;--green:#00E887;--amber:#FFB020;--blue:#4D8EFF;--red:#FF4560;--ff:'Inter',system-ui,sans-serif;
+  --fi:'Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif;--fm:'DM Mono',monospace;}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--s);-webkit-font-smoothing:antialiased;overflow:hidden}
+.deck{height:100vh;display:flex;flex-direction:column}
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:52px;background:rgba(10,12,15,.95);border-bottom:1px solid var(--b1);flex-shrink:0}
+.nn{font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:800;color:var(--s);letter-spacing:-.02em}
+.slide-counter{font-family:var(--fm);font-size:11px;color:var(--i3)}
+.nav-btns{display:flex;gap:8px}
+.nb{padding:6px 16px;border-radius:7px;border:1px solid var(--b1);background:transparent;color:var(--i3);font-family:var(--fi);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s}
+.nb:hover{border-color:var(--amber);color:var(--amber)}
+.nb.active-btn{background:var(--amber);color:#000;border-color:var(--amber)}
+a.nb{text-decoration:none}
+.slides{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:60px;opacity:0;transition:opacity .3s,transform .3s;transform:translateX(40px);pointer-events:none;flex-direction:column;text-align:center}
+.slide.active{opacity:1;transform:none;pointer-events:all}
+.slide.prev{transform:translateX(-40px)}
+.slide-tag{font-family:var(--fm);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--i3);margin-bottom:20px}
+.slide-title{font-family:'Inter',system-ui,sans-serif;font-size:clamp(36px,6vw,68px);font-weight:800;letter-spacing:-.025em;line-height:1.0;margin-bottom:24px}
+.slide-sub{font-family:'Inter',system-ui,sans-serif;font-size:clamp(14px,2vw,19px);font-weight:500;color:var(--i2);max-width:720px;line-height:1.65;margin-bottom:32px}
+.slide-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
+.ss{text-align:center}
+.ssv{font-family:'Inter',system-ui,sans-serif;font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-.02em;line-height:1}
+.ssl{font-family:var(--fm);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--i3);margin-top:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:900px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%;max-width:1000px}
+.card{background:rgba(255,255,255,.04);border:1px solid var(--b1);border-radius:14px;padding:28px;text-align:left}
+.card-title{font-family:'Inter',system-ui,sans-serif;font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px}
+.card-body{font-size:14px;color:var(--i2);line-height:1.7;font-weight:500}
+.card-val{font-family:'Inter',system-ui,sans-serif;font-size:26px;font-weight:800;letter-spacing:-.015em;margin-top:14px}
+.comp-table{width:100%;max-width:900px;border-collapse:collapse;text-align:left}
+.comp-table th{font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--i3);padding:10px 16px;border-bottom:1px solid var(--b1)}
+.comp-table td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px;font-weight:500}
+.comp-table td:first-child{font-weight:700;color:var(--s)}
+.bad{color:var(--red)}.good{color:var(--green)}.ok{color:var(--amber)}
+.pill-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.pill{padding:8px 20px;border-radius:100px;font-family:var(--fm);font-size:12px;font-weight:700;border:1px solid}
+.highlight{color:var(--amber);font-weight:700}
+footer-nav{display:flex;justify-content:center;padding:16px;gap:8px;flex-shrink:0}
+.dot-nav{display:flex;gap:8px;align-items:center;padding:14px 0;justify-content:center;flex-shrink:0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--b1);cursor:pointer;transition:all .2s}
+.dot.active{background:var(--amber);transform:scale(1.3)}
+</style>
+</head>
+<body>
+<div class="deck">
+<nav>
+  <a class="nn" href="index.html">← ubuntupay.africa</a>
+  <div class="slide-counter"><span id="cur">1</span> / <span id="tot">8</span></div>
+  <div class="nav-btns">
+    <button class="nb" onclick="prev()">← Prev</button>
+    <button class="nb" onclick="next()">Next →</button>
+    <a class="nb" href="demo.html">▶ Live Demo</a>
+  </div>
+</nav>
+
+<div class="slides" id="slides">
+
+  <!-- 1: TITLE -->
+  <div class="slide active">
+    <div class="slide-tag">Africa Ignite 2026 · Theme 6: Open Innovation · Shortlisted</div>
+    <h1 class="slide-title">The Network<br>Is The Bank.</h1>
+    <p class="slide-sub">Ubuntu Pay turns every African SIM card into a bank account using Nokia's cellular network as the trust layer. No app. No ID. No seed phrase.</p>
+    <div class="slide-stats">
+      <div class="ss"><div class="ssv" style="color:var(--green)">600M</div><div class="ssl">Addressable Users</div></div>
+      <div class="ss"><div class="ssv" style="color:var(--amber)">11s</div><div class="ssl">Settlement Time</div></div>
+      <div class="ss"><div class="ssv" style="color:var(--blue)">&lt;1%</div><div class="ssl">Total Fees</div></div>
+      <div class="ss"><div class="ssv" style="color:var(--red)">$6M</div><div class="ssl">B2B ARR Year 2</div></div>
+    </div>
+  </div>
+
+  <!-- 2: PROBLEM -->
+  <div class="slide">
+    <div class="slide-tag">The Problem</div>
+    <h1 class="slide-title">The banks<br>said no.</h1>
+    <p class="slide-sub">850 million Africans have no bank account. 300 million live within 5km of a mobile money agent. Legacy banks decided they were not worth serving. We disagree.</p>
+    <div class="grid3" style="margin-top:32px">
+      <div class="card"><div class="card-title" style="color:var(--red)">Western Union</div><div class="card-body">7–16% fees · 3–5 days · Requires ID · Physical location</div><div class="card-val bad">16.8%</div></div>
+      <div class="card"><div class="card-title" style="color:var(--amber)">M-Pesa GlobalPay</div><div class="card-body">~7% fees · Requires smartphone · Limited corridors · No blockchain</div><div class="card-val ok">7%</div></div>
+      <div class="card"><div class="card-title" style="color:var(--green)">Ubuntu Pay</div><div class="card-body">USSD *384# · Any phone · Nokia trust oracle · 11 seconds · KES 15 fee</div><div class="card-val good">&lt;1%</div></div>
+    </div>
+  </div>
+
+  <!-- 3: SOLUTION -->
+  <div class="slide">
+    <div class="slide-tag">The Solution</div>
+    <h1 class="slide-title">Your SIM card<br>is your bank.</h1>
+    <p class="slide-sub">We use Nokia's cellular network as a cryptographic trust oracle. Joseph's phone number IS his wallet. His SIM IS his passport. His IMSI + IMEI + PIN = his private key.</p>
+    <div class="grid3" style="margin-top:32px">
+      <div class="card"><div class="card-title" style="color:var(--blue)">Step 1: Visit Agent</div><div class="card-body">Joseph hands KES 5,000 to the Agent. Dials *384# on his basic phone. No smartphone. No app. No internet.</div></div>
+      <div class="card"><div class="card-title" style="color:var(--amber)">Step 2: Trust Oracle</div><div class="card-body">5 Nokia CAMARA APIs fire silently. Gemini 3.1 AI scores the transaction. Score 94/100. ALLOW. 2.3 seconds.</div></div>
+      <div class="card"><div class="card-title" style="color:var(--green)">Step 3: John receives</div><div class="card-body">KES → USDC via Yellow Card. USDC settles on Polygon Amoy. USDC → NGN to John's MTN MoMo. 11 seconds total.</div></div>
+    </div>
+  </div>
+
+  <!-- 4: NOKIA -->
+  <div class="slide">
+    <div class="slide-tag">The Trust Layer</div>
+    <h1 class="slide-title">5 Nokia APIs.<br>Zero spoofing.</h1>
+    <p class="slide-sub">We use Nokia Network as Code to read what the cellular network actually sees — not what a user types. This is infrastructure that already covers 600 million Africans.</p>
+    <div class="grid2" style="margin-top:32px;max-width:800px">
+      <div class="card"><div class="card-title" style="color:var(--blue)">📱 Device Swap</div><div class="card-body"><code style="font-family:var(--fm);color:var(--amber)">verify_device_swap(max_age=72)</code><br><br>Was this SIM moved to a different device? 94% of wallet drains follow a device swap.</div></div>
+      <div class="card"><div class="card-title" style="color:var(--green)">🔍 SIM Swap History</div><div class="card-body"><code style="font-family:var(--fm);color:var(--amber)">get_sim_swap_date()</code><br><br>Was the SIM card itself replaced in the last 72 hours? Primary signal for account takeover.</div></div>
+      <div class="card"><div class="card-title" style="color:var(--amber)">✅ Number Verify</div><div class="card-body"><code style="font-family:var(--fm);color:var(--amber)">verify_number()</code><br><br>Silent cellular check. No OTP that can be intercepted. Device must physically own the number.</div></div>
+      <div class="card"><div class="card-title" style="color:var(--red)">📡 Roaming Status</div><div class="card-body"><code style="font-family:var(--fm);color:var(--amber)">get_roaming()</code><br><br>Joseph in Nairobi. Device appears in Hungary. Gemini scores 0. Instant BLOCK.</div></div>
+    </div>
+  </div>
+
+  <!-- 5: REVENUE -->
+  <div class="slide">
+    <div class="slide-tag">Business Model</div>
+    <h1 class="slide-title">Six revenue<br>streams.</h1>
+    <p class="slide-sub">We are not competing with banks. We are the infrastructure layer that banks, lenders, and fintechs pay to access — Trust-as-a-Service.</p>
+    <div class="grid3" style="margin-top:28px">
+      <div class="card"><div class="card-title" style="color:var(--green)">🌍 Cross-Border Fee</div><div class="card-body">0.3% on every transfer. KES→NGN, GHS, ZAR, TZS. Small enough to beat WU. Massive at scale.</div><div class="card-val" style="color:var(--green)">$2M/yr Y1</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">📡 B2B Trust Oracle</div><div class="card-body">$0.05/call. Banks, lenders, e-commerce pay to query our Nokia + Gemini trust score via API.</div><div class="card-val" style="color:var(--blue)">$6M/yr Y2</div></div>
+      <div class="card"><div class="card-title" style="color:var(--amber)">💱 FX Spread</div><div class="card-body">0.1% on every KES→USDC and USDC→local conversion. Pure margin, no incremental cost.</div><div class="card-val" style="color:var(--amber)">$2M/yr Y1</div></div>
+      <div class="card"><div class="card-title" style="color:var(--green)">🏦 Ubuntu Save</div><div class="card-body">Deposit USDC into Aave. 4% APY gross. Pass 3% to users. Keep 1% spread. DeFi for the unbanked.</div><div class="card-val" style="color:var(--green)">$1M/yr Y2</div></div>
+      <div class="card"><div class="card-title" style="color:var(--red)">🛡️ Ubuntu Insurance</div><div class="card-body">$0.20/month lost-device coverage. 0.1% remittance success guarantee. Nexus Mutual partnership.</div><div class="card-val" style="color:var(--red)">$120M/yr @scale</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">⭐ Premium</div><div class="card-body">$3/month. Unlimited domestic transfers. Priority support. Higher MoMo limits. Business accounts.</div><div class="card-val" style="color:var(--blue)">$3M/yr Y2</div></div>
+    </div>
+  </div>
+
+  <!-- 6: COMPARISON -->
+  <div class="slide">
+    <div class="slide-tag">Why Ubuntu Pay Wins</div>
+    <h1 class="slide-title">Institutional-grade.<br>Zero friction.</h1>
+    <table class="comp-table">
+      <tr><th>Feature</th><th>Legacy Banks</th><th>Western Union</th><th>M-Pesa</th><th style="color:var(--amber)">Ubuntu Pay</th></tr>
+      <tr><td>Onboarding</td><td class="bad">3–5 days</td><td class="bad">Physical branch</td><td class="ok">1 day</td><td class="good">60 seconds</td></tr>
+      <tr><td>Settlement</td><td class="bad">3–5 days</td><td class="bad">1–3 days</td><td class="ok">Minutes</td><td class="good">11 seconds</td></tr>
+      <tr><td>Fees</td><td class="bad">3–8%</td><td class="bad">7–16%</td><td class="ok">~7%</td><td class="good">&lt;1%</td></tr>
+      <tr><td>Requires smartphone</td><td class="bad">Yes</td><td class="bad">Yes</td><td class="bad">Yes</td><td class="good">No — USSD *384#</td></tr>
+      <tr><td>Fraud detection</td><td class="ok">Rules-based</td><td class="bad">Reactive</td><td class="ok">Basic</td><td class="good">Nokia + Gemini 3.1 AI</td></tr>
+      <tr><td>Key recovery</td><td class="bad">Visit branch</td><td class="bad">Call centre</td><td class="ok">Call centre</td><td class="good">Agent + Nokia verify</td></tr>
+    </table>
+  </div>
+
+  <!-- 7: ROADMAP -->
+  <div class="slide">
+    <div class="slide-tag">Roadmap</div>
+    <h1 class="slide-title">Path to<br>$1 Billion ARR.</h1>
+    <div class="grid2" style="margin-top:32px;max-width:900px">
+      <div class="card"><div class="card-title" style="color:var(--green)">Phase 1 — Now</div><div class="card-body">Kenya → Nigeria → Ghana triangle. Perfect Trust Oracle. 50k users. Agent network launch.</div><div class="card-val" style="color:var(--green)">$2M ARR</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">Phase 2 — Year 2</div><div class="card-body">Open Nokia/Gemini API to third-party banks. Trust-as-a-Service platform. 500k users. 10 enterprise clients.</div><div class="card-val" style="color:var(--blue)">$28M ARR</div></div>
+      <div class="card"><div class="card-title" style="color:var(--amber)">Phase 3 — Year 3</div><div class="card-body">Ubuntu Save + Ubuntu Insurance. ERC-4337 account abstraction. ZK-proof KYC. 3M users. 6 countries.</div><div class="card-val" style="color:var(--amber)">$180M ARR</div></div>
+      <div class="card"><div class="card-title" style="color:var(--red)">Phase 4 — Year 5</div><div class="card-body">20M users. 15 countries. Pan-Africa. The financial OS for the people banks forgot.</div><div class="card-val" style="color:var(--red)">$1B+ ARR</div></div>
+    </div>
+  </div>
+
+  <!-- 8: CLOSE -->
+  <div class="slide">
+    <div class="slide-tag">The Ask</div>
+    <h1 class="slide-title">We are not<br>moving money.</h1>
+    <p class="slide-sub">We are moving trust. Ubuntu Pay is the financial operating system for 600 million Africans that legacy banks decided were not worth serving. The infrastructure is live. The network is ready. The SIM is the bank.</p>
+    <div class="pill-row">
+      <span class="pill" style="color:var(--green);border-color:rgba(0,232,135,.3);background:rgba(0,232,135,.06)">✓ Nokia NaC — Live</span>
+      <span class="pill" style="color:var(--blue);border-color:rgba(77,142,255,.3);background:rgba(77,142,255,.06)">✓ Gemini 3.1 — Live</span>
+      <span class="pill" style="color:var(--amber);border-color:rgba(255,176,32,.3);background:rgba(255,176,32,.06)">✓ Polygon Amoy — Deployed</span>
+      <span class="pill" style="color:var(--red);border-color:rgba(255,69,96,.3);background:rgba(255,69,96,.06)">✓ TrustGate.sol — Verified</span>
+    </div>
+    <div style="margin-top:32px;display:flex;gap:12px;justify-content:center">
+      <a href="demo.html" style="padding:14px 28px;background:var(--amber);color:#000;border-radius:12px;font-family:var(--fi);font-size:14px;font-weight:800;text-decoration:none;letter-spacing:-.02em">▶ Watch Live Demo</a>
+      <a href="whitepaper.html" style="padding:14px 28px;background:transparent;color:var(--s);border:1px solid var(--b1);border-radius:12px;font-family:var(--fi);font-size:14px;font-weight:700;text-decoration:none">Read Whitepaper</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="dot-nav" id="dot-nav"></div>
+</div>
+
+<script>
+let cur = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+document.getElementById('tot').textContent = total;
+const dotNav = document.getElementById('dot-nav');
+slides.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = `dot${i===0?' active':''}`;
+  d.onclick = () => go(i);
+  dotNav.appendChild(d);
+});
+function go(n) {
+  slides[cur].classList.remove('active'); slides[cur].classList.add('prev');
+  setTimeout(() => slides[cur].classList.remove('prev'), 300);
+  cur = Math.max(0, Math.min(total-1, n));
+  slides[cur].classList.add('active');
+  document.getElementById('cur').textContent = cur+1;
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===cur));
+}
+function next() { go(cur+1); }
+function prev() { go(cur-1); }
+document.addEventListener('keydown', e => { if(e.key==='ArrowRight'||e.key===' ') next(); if(e.key==='ArrowLeft') prev(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+const hre = require("hardhat");
+
+async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+  console.log("\n════════════════════════════════════════");
+  console.log("Ubuntu Pay — TrustGate Deployment");
+  console.log(`Network:  ${hre.network.name}`);
+  console.log(`Deployer: ${deployer.address}`);
+
+  const balance = await hre.ethers.provider.getBalance(deployer.address);
+  console.log(`Balance:  ${hre.ethers.formatEther(balance)} MATIC\n`);
+
+  if (balance < hre.ethers.parseEther("0.01")) {
+    console.error("❌ Need more MATIC — get free at: https://faucet.polygon.technology");
+    process.exit(1);
+  }
+
+  const USDC_MUMBAI = "0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97";
+  const TrustGate   = await hre.ethers.getContractFactory("TrustGate");
+  const gate        = await TrustGate.deploy(deployer.address, USDC_MUMBAI);
+  await gate.waitForDeployment();
+  const addr = await gate.getAddress();
+
+  console.log("════════════════════════════════════════");
+  console.log(`✓ Deployed: ${addr}`);
+  console.log(`  https://mumbai.polygonscan.com/address/${addr}`);
+  console.log(`\n  Add to .env:\n  TRUST_GATE_ADDRESS=${addr}`);
+  console.log("════════════════════════════════════════\n");
+
+  const fs  = require("fs");
+  const art = await hre.artifacts.readArtifact("TrustGate");
+  fs.writeFileSync("../trust-oracle/TrustGate.abi.json", JSON.stringify(art.abi, null, 2));
+  console.log("✓ ABI saved to trust-oracle/TrustGate.abi.json");
+}
+
+main().catch(e => { console.error(e); process.exit(1); });
