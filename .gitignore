@@ -46,6 +46,6 @@ smart-contracts/node_modules/
 smart-contracts/out/
 smart-contracts/cache/
 *.db
-smart-contracts/broadcast/
+smart-contracts/broadcast/*
 smart-contracts/cache/
 smart-contracts/out/
