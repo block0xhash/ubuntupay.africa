@@ -2,6 +2,7 @@
 
 _Website: https://ubuntupay.africa/
 Demo: https://ubuntupay.africa/demo-ussd.html_
+_Smart Contract: https://amoy.polygonscan.com/address/0xaa5D997CaD5C528DCf9AC1D07d8DD5154C3D66D5#code_
 
 S**ection 1: Problem Statement**
 
